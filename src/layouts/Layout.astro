@@ -8,11 +8,73 @@ import { asLocale, useUi } from '../i18n/ui';
 interface Props {
   title?: string;
   description?: string;
+  image?: string;
+  imageAlt?: string;
+  imageWidth?: number | string;
+  imageHeight?: number | string;
+  type?: 'website' | 'article';
+  publishedTime?: string;
+  author?: string;
 }
 
 const locale = asLocale(Astro.currentLocale);
 const copy = useUi(locale);
-const { title = copy.meta.title, description = copy.meta.description } = Astro.props;
+const {
+  title = copy.meta.title,
+  description = copy.meta.description,
+  image = '/assets/portrait.jpg',
+  imageAlt,
+  imageWidth = 1086,
+  imageHeight = 1448,
+  type = 'website',
+  publishedTime,
+  author = 'Dario Farzati',
+} = Astro.props;
+
+const siteUrl = Astro.site ?? new URL('https://lufzle.dev');
+const pathname = Astro.url.pathname;
+const normalizedPath = pathname.endsWith('/') ? pathname : `${pathname}/`;
+const canonicalUrl = new URL(normalizedPath, siteUrl);
+
+const basePath = normalizedPath.replace(/^\/es(?=\/|$)/, '') || '/';
+const enUrl = new URL(basePath, siteUrl);
+const esUrl = new URL(basePath === '/' ? '/es/' : `/es${basePath}`, siteUrl);
+
+const ogImageUrl = new URL(image, siteUrl);
+
+const SPANISH_MONTHS: Record<string, string> = {
+  ene: 'Jan',
+  feb: 'Feb',
+  mar: 'Mar',
+  abr: 'Apr',
+  may: 'May',
+  jun: 'Jun',
+  jul: 'Jul',
+  ago: 'Aug',
+  sep: 'Sep',
+  set: 'Sep',
+  oct: 'Oct',
+  nov: 'Nov',
+  dic: 'Dec',
+};
+
+function toIsoDate(dateStr?: string): string | undefined {
+  if (!dateStr) return undefined;
+  let parsed = Date.parse(dateStr);
+  if (isNaN(parsed)) {
+    const normalized = dateStr
+      .toLowerCase()
+      .replace(
+        /\b(ene|feb|mar|abr|may|jun|jul|ago|sep|set|oct|nov|dic)[a-z]*\b/g,
+        (m) => SPANISH_MONTHS[m.slice(0, 3)] ?? m
+      );
+    parsed = Date.parse(normalized);
+  }
+  if (isNaN(parsed)) return undefined;
+  return new Date(parsed).toISOString();
+}
+
+const isoPublishedTime = toIsoDate(publishedTime);
 ---
 
 <!doctype html>
@@ -23,8 +85,46 @@ const { title = copy.meta.title, description = copy.meta.description } = Astro.p
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
+
+    <!-- Primary Meta Tags -->
     <title>{title}</title>
+    <meta name="title" content={title} />
     <meta name="description" content={description} />
+    <meta name="author" content={author} />
+
+    <!-- Canonical & Alternate Locales -->
+    <link rel="canonical" href={canonicalUrl.href} />
+    <link rel="alternate" hreflang="en" href={enUrl.href} />
+    <link rel="alternate" hreflang="es" href={esUrl.href} />
+    <link rel="alternate" hreflang="x-default" href={enUrl.href} />
+
+    <!-- Open Graph / Facebook / LinkedIn / WhatsApp -->
+    <meta property="og:site_name" content="Dario Farzati" />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalUrl.href} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageUrl.href} />
+    <meta property="og:image:secure_url" content={ogImageUrl.href} />
+    {imageWidth && <meta property="og:image:width" content={String(imageWidth)} />}
+    {imageHeight && <meta property="og:image:height" content={String(imageHeight)} />}
+    <meta property="og:image:alt" content={imageAlt || title} />
+    <meta property="og:locale" content={locale === 'es' ? 'es_ES' : 'en_US'} />
+    <meta property="og:locale:alternate" content={locale === 'es' ? 'en_US' : 'es_ES'} />
+    {type === 'article' && isoPublishedTime && (
+      <meta property="article:published_time" content={isoPublishedTime} />
+    )}
+    {type === 'article' && author && (
+      <meta property="article:author" content={author} />
+    )}
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalUrl.href} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl.href} />
+    <meta name="twitter:image:alt" content={imageAlt || title} />
 
     <!-- Preload critical fonts locally to eliminate FOUT (Flash of Unstyled Text) -->
     <link

@@ -6,7 +6,7 @@ const en = {
   meta: {
     title: 'Dario Farzati — AI Strategist · Educator · Product Designer',
     description:
-      'I help product engineering teams work with AI agents instead of around them: how tasks are framed, how agents get context and tools, and how output is evaluated before it ships.',
+      'I help teams develop their agentic engineering practice: automation, workflows, and AI agents that contribute as teammates.',
   },
   nav: {
     writing: 'Writing',
@@ -51,11 +51,15 @@ const en = {
   },
   write: {
     title: 'Writing — Dario Farzati',
+    description:
+      'Essays on agentic engineering, systems architecture, and working with AI in production.',
     heading: 'Things I write',
     back: '← All posts',
   },
   contact: {
     title: 'Contact — Dario Farzati',
+    description:
+      'Get in touch with Dario Farzati about installing agentic practice, advisory, coaching, or speaking.',
     tag: 'Contact',
     heading: 'Get in touch.',
     lede: 'Email is the best way to reach me. I read everything and reply to what I can.',
@@ -74,6 +78,7 @@ const en = {
   },
   privacy: {
     title: 'Privacy Policy — Dario Farzati',
+    description: 'Privacy policy and data protection details for lufzle.dev.',
     tag: 'Privacy',
     heading: 'Privacy policy.',
     updated: 'Last updated: September 2026',
@@ -100,7 +105,7 @@ const es: typeof en = {
   meta: {
     title: 'Dario Farzati — Estratega de IA · Educador · Diseñador de producto',
     description:
-      'Ayudo a equipos de ingeniería de producto a trabajar con agentes de IA en lugar de a su alrededor: cómo se plantean las tareas, cómo los agentes reciben contexto y herramientas, y cómo se evalúa el resultado antes de publicarlo.',
+      'Ayudo a los equipos a desarrollar su práctica de ingeniería agéntica: automatización, flujos de trabajo y agentes de IA que contribuyen como compañeros de equipo.',
   },
   nav: {
     writing: 'Escritos',
@@ -145,11 +150,15 @@ const es: typeof en = {
   },
   write: {
     title: 'Escritos — Dario Farzati',
+    description:
+      'Ensayos sobre ingeniería agéntica, arquitectura de sistemas y trabajo con IA en producción.',
     heading: 'Cosas que escribo',
     back: '← Todos los textos',
   },
   contact: {
     title: 'Contacto — Dario Farzati',
+    description:
+      'Ponte en contacto con Dario Farzati para implantar práctica agéntica, asesoría, formación o conferencias.',
     tag: 'Contacto',
     heading: 'Escríbeme.',
     lede: 'El email es la mejor forma de encontrarme. Leo todo y respondo lo que puedo.',
@@ -168,6 +177,7 @@ const es: typeof en = {
   },
   privacy: {
     title: 'Política de privacidad — Dario Farzati',
+    description: 'Política de privacidad y protección de datos de lufzle.dev.',
     tag: 'Privacidad',
     heading: 'Política de privacidad.',
     updated: 'Última actualización: septiembre de 2026',

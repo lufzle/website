@@ -5,7 +5,7 @@ import { asLocale, useUi } from '../i18n/ui';
 const copy = useUi(asLocale(Astro.currentLocale));
 ---
 
-<Layout title={copy.contact.title}>
+<Layout title={copy.contact.title} description={copy.contact.description}>
   <section class="contact-section">
     <header class="contact-header">
       <div class="contact-tag mono">{copy.contact.tag}</div>

@@ -5,7 +5,7 @@ import { asLocale, useUi } from '../i18n/ui';
 const copy = useUi(asLocale(Astro.currentLocale));
 ---
 
-<Layout title={copy.privacy.title}>
+<Layout title={copy.privacy.title} description={copy.privacy.description}>
   <section class="privacy-section">
     <header class="privacy-header">
       <div class="privacy-tag mono">{copy.privacy.tag}</div>

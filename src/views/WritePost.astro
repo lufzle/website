@@ -3,6 +3,7 @@ import { render, type CollectionEntry } from 'astro:content';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import Layout from '../layouts/Layout.astro';
 import { asLocale, useUi } from '../i18n/ui';
+import { postSlug } from '../i18n/posts';
 
 interface Props {
   post: CollectionEntry<'posts'>;
@@ -13,9 +14,55 @@ const { Content } = await render(post);
 const locale = asLocale(Astro.currentLocale);
 const copy = useUi(locale);
 const writeHref = getRelativeLocaleUrl(locale, 'write');
+
+const slug = postSlug(post.id);
+const postImages: Record<string, { src: string; width: number; height: number; alt: string }> = {
+  'the-graph-is-the-easy-part': {
+    src: '/assets/posts/the-graph-is-the-easy-part/hero-graph.png',
+    width: 1536,
+    height: 1024,
+    alt: 'A node-and-edge graph in black ink on grid paper with a dashed red edge',
+  },
+  'mcp-unified-protocol-agents-apps': {
+    src: '/assets/posts/mcp-unified-protocol-agents-apps/hero-architecture.jpg',
+    width: 1264,
+    height: 848,
+    alt: 'Architectural diagram of agent and app protocol convergence',
+  },
+  'vibe-coding-a-mature-live-product': {
+    src: '/assets/posts/vibe-coding-a-mature-live-product/hero-sediment.jpg',
+    width: 1264,
+    height: 848,
+    alt: 'Architectural blueprint showing code sediment over time',
+  },
+};
+
+const metaImage = post.data.image
+  ? {
+      src: post.data.image,
+      width: 1200,
+      height: 630,
+      alt: post.data.imageAlt || post.data.title,
+    }
+  : (postImages[slug] ?? {
+      src: '/assets/portrait.jpg',
+      width: 1086,
+      height: 1448,
+      alt: 'Dario Farzati',
+    });
 ---
 
-<Layout title={`${post.data.title} — Dario Farzati`} description={post.data.summary}>
+<Layout
+  title={`${post.data.title} — Dario Farzati`}
+  description={post.data.summary}
+  image={metaImage.src}
+  imageAlt={metaImage.alt}
+  imageWidth={metaImage.width}
+  imageHeight={metaImage.height}
+  type="article"
+  publishedTime={post.data.date}
+  author="Dario Farzati"
+>
   <article class="post-article">
     <a href={writeHref} class="back-link mono">{copy.write.back}</a>
 

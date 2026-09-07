@@ -11,6 +11,8 @@ const posts = defineCollection({
     readTime: z.string(),
     lede: z.string(),
     order: z.number().default(0),
+    image: z.string().optional(),
+    imageAlt: z.string().optional(),
   }),
 });
 
