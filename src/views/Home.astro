@@ -1,0 +1,400 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { asLocale, useUi } from '../i18n/ui';
+import { postsForLocale, postSlug } from '../i18n/posts';
+import { builds } from '../data/projects';
+
+const locale = asLocale(Astro.currentLocale);
+const copy = useUi(locale);
+const posts = await postsForLocale(locale);
+const contactHref = getRelativeLocaleUrl(locale, 'contact');
+const writeHref = getRelativeLocaleUrl(locale, 'write');
+---
+
+<Layout>
+  <div class="home-container">
+    <header class="hero-header">
+      <div class="portrait-wrapper">
+        <img
+          id="portrait-normal"
+          src="/assets/portrait.jpg"
+          alt="Dario Farzati"
+          class="portrait-img"
+        />
+        <img
+          id="portrait-cga"
+          src="/assets/portrait-cga.png"
+          alt="Dario Farzati"
+          class="portrait-cga"
+          style="display:none"
+        />
+      </div>
+
+      <div class="hero-title-group">
+        <h1 class="hero-name">
+          Dario Farzati<span id="cga-cursor" class="cga-cursor" style="display:none">_</span>
+        </h1>
+        <div class="hero-subtitle">{copy.home.subtitle}</div>
+      </div>
+
+      <p class="hero-lede">{copy.home.lede}</p>
+
+      <a href={contactHref} class="cta-link">
+        {copy.home.cta} <span aria-hidden="true">→</span>
+      </a>
+    </header>
+
+    <section class="section-grid">
+      <div class="section-label color-cyan">{copy.home.about}</div>
+      <div class="about-content">
+        <p>{copy.home.aboutP1}</p>
+        <p class="text-secondary">{copy.home.aboutP2a}</p>
+        <div class="about-services">
+          <p class="service-item">
+            <span class="text-primary">{copy.home.strategy}</span> <span class="text-secondary">{copy.home.strategyBody}</span>
+          </p>
+          <p class="service-item">
+            <span class="text-primary">{copy.home.teaching}</span> <span class="text-secondary">{copy.home.teachingBody}</span>
+          </p>
+          <p class="service-item">
+            <span class="text-primary">{copy.home.design}</span> <span class="text-secondary">{copy.home.designBody}</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-grid">
+      <div class="section-label color-magenta">{copy.home.company}</div>
+      <div class="company-card">
+        <img src="/assets/sinumo-logo.png" alt="Sinumo" class="company-logo" />
+        <div class="company-details">
+          <div class="company-title-row">
+            <span class="company-name">Sinumo</span>
+            <span class="company-role">{copy.home.founder}</span>
+          </div>
+          <p class="company-desc">{copy.home.companyDesc}</p>
+          <a href="https://sinumo.com" target="_blank" rel="noopener" class="company-link">
+            sinumo.com →
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-grid">
+      <div class="section-label color-yellow">{copy.home.write}</div>
+      <div class="list-container">
+        {
+          posts.map((p) => (
+            <a href={getRelativeLocaleUrl(locale, `write/${postSlug(p.id)}`)} class="item-row">
+              <span class="item-text">
+                <span class="item-title">{p.data.title}</span>
+                <span class="item-summary">{p.data.summary}</span>
+              </span>
+              <span class="item-meta mono">{p.data.date}</span>
+            </a>
+          ))
+        }
+        <a href={writeHref} class="all-link">{copy.home.allPosts}</a>
+      </div>
+    </section>
+
+    <section class="section-grid">
+      <div class="section-label color-cyan">{copy.home.build}</div>
+      <div class="list-container">
+        {
+          builds.map((b) =>
+            b.url ? (
+              <a href={b.url} target="_blank" rel="noopener" class="item-row">
+                <span class="item-text">
+                  <span class="item-title">{b.title}</span>
+                  <span class="item-summary">{b.summary[locale]}</span>
+                </span>
+                <span class="item-meta mono">{b.meta[locale]}</span>
+              </a>
+            ) : (
+              <div class="item-row item-row-static">
+                <span class="item-text">
+                  <span class="item-title">{b.title}</span>
+                  <span class="item-summary">{b.summary[locale]}</span>
+                </span>
+                <span class="item-meta mono">{b.meta[locale]}</span>
+              </div>
+            )
+          )
+        }
+        <a href="https://github.com/lufzle" target="_blank" rel="noopener" class="all-link">
+          {copy.home.allProjects}
+        </a>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .home-container {
+    display: flex;
+    flex-direction: column;
+    gap: 120px;
+  }
+
+  .hero-header {
+    padding-top: clamp(64px, 12vh, 140px);
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .portrait-wrapper {
+    width: 160px;
+    height: 160px;
+    position: relative;
+    flex: none;
+  }
+
+  .portrait-img {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: 50% 20%;
+    border: 1px solid var(--line);
+    flex: none;
+  }
+
+  .portrait-cga {
+    width: 160px;
+    height: 160px;
+    flex: none;
+    image-rendering: pixelated;
+  }
+
+  .hero-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .hero-name {
+    margin: 0;
+    font-size: clamp(38px, 6vw, 58px);
+    line-height: 1.05;
+    font-weight: 500;
+    letter-spacing: -0.025em;
+  }
+
+  .cga-cursor {
+    animation: blink 1s steps(1) infinite;
+    color: var(--c);
+  }
+
+  .hero-subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg3);
+  }
+
+  .hero-lede {
+    margin: 0;
+    color: var(--fg2);
+    font-size: 22px;
+    max-width: 560px;
+  }
+
+  .cta-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: max-content;
+    font-size: 16.5px;
+    border-bottom: 1px solid var(--fg);
+    padding-bottom: 2px;
+    transition:
+      border-color 0.2s,
+      color 0.2s;
+  }
+
+  .cta-link:hover {
+    border-color: var(--c);
+  }
+
+  .section-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border-top: 1px solid var(--line);
+    padding-top: 32px;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .color-cyan {
+    color: var(--c);
+  }
+
+  .color-magenta {
+    color: var(--m);
+  }
+
+  .color-yellow {
+    color: var(--y);
+  }
+
+  .about-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .about-content p {
+    margin: 0;
+  }
+
+  .about-services {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .service-item {
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .text-secondary {
+    color: var(--fg2);
+  }
+
+  .text-primary {
+    color: var(--fg);
+  }
+
+  .company-card {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .company-logo {
+    width: 48px;
+    height: 48px;
+    flex: none;
+    border-radius: 10px;
+    background: #000;
+    border: 1px solid var(--line);
+    object-fit: cover;
+  }
+
+  .company-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .company-title-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .company-name {
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .company-role {
+    font-size: 14px;
+    color: var(--fg3);
+  }
+
+  .company-desc {
+    margin: 0;
+    color: var(--fg2);
+  }
+
+  .company-link {
+    font-size: 16px;
+    width: max-content;
+    border-bottom: 1px solid var(--line);
+    transition:
+      border-color 0.2s,
+      color 0.2s;
+  }
+
+  .company-link:hover {
+    border-color: var(--c);
+  }
+
+  .list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .item-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: baseline;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    transition: color 0.2s;
+  }
+
+  a.item-row:hover {
+    color: var(--fg);
+  }
+
+  .item-row-static {
+    cursor: default;
+  }
+
+  .item-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .item-title {
+    font-weight: 500;
+  }
+
+  .item-summary {
+    font-size: 17px;
+    color: var(--fg2);
+  }
+
+  .item-meta {
+    font-size: 12px;
+    color: var(--fg3);
+    white-space: nowrap;
+  }
+
+  .mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .all-link {
+    font-size: 16px;
+    color: var(--fg2);
+    width: max-content;
+    margin-top: 18px;
+    border-bottom: 1px solid var(--line);
+    transition:
+      color 0.2s,
+      border-color 0.2s;
+  }
+
+  .all-link:hover {
+    color: var(--fg);
+    border-color: var(--c);
+  }
+</style>

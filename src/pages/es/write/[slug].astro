@@ -1,0 +1,15 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import WritePost from '../../../views/WritePost.astro';
+import { writePostPaths } from '../../../i18n/posts';
+
+export const getStaticPaths = writePostPaths('es');
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+}
+
+const { post } = Astro.props;
+---
+
+<WritePost post={post} />

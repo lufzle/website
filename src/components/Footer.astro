@@ -1,0 +1,79 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { asLocale, useUi } from '../i18n/ui';
+
+const locale = asLocale(Astro.currentLocale);
+const copy = useUi(locale);
+const contactHref = getRelativeLocaleUrl(locale, 'contact');
+const privacyHref = getRelativeLocaleUrl(locale, 'privacy');
+---
+
+<footer class="site-footer">
+  <div class="footer-links">
+    <a href="mailto:dario@lufzle.dev" class="footer-link">{copy.footer.email}</a>
+    <a href="https://linkedin.com/in/dariofarzati" target="_blank" rel="noopener" class="footer-link">LinkedIn</a>
+    <a href="https://github.com/lufzle" target="_blank" rel="noopener" class="footer-link">GitHub</a>
+    <a href="https://sinumo.com" target="_blank" rel="noopener" class="footer-link">Sinumo</a>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Dario Farzati</span>
+    <div class="footer-sublinks">
+      <a href={contactHref} class="footer-sublink">{copy.footer.contact}</a>
+      <a href={privacyHref} class="footer-sublink">{copy.footer.privacy}</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    width: 100%;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 32px 32px 40px;
+    box-sizing: border-box;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-size: 15.5px;
+  }
+
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    color: var(--fg2);
+  }
+
+  .footer-link {
+    color: var(--fg2);
+    transition: color 0.2s;
+  }
+
+  .footer-link:hover {
+    color: var(--fg);
+  }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 14px;
+    color: var(--fg3);
+  }
+
+  .footer-sublinks {
+    display: flex;
+    gap: 16px;
+  }
+
+  .footer-sublink {
+    color: var(--fg3);
+    transition: color 0.2s;
+  }
+
+  .footer-sublink:hover {
+    color: var(--fg);
+  }
+</style>

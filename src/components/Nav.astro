@@ -1,0 +1,145 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { asLocale, useUi } from '../i18n/ui';
+import ThemeToggle from './ThemeToggle.astro';
+
+const locale = asLocale(Astro.currentLocale);
+const copy = useUi(locale);
+const rest =
+  locale === 'es' ? Astro.url.pathname.replace(/^\/es\/?/, '/') || '/' : Astro.url.pathname;
+const path = rest.replace(/^\//, '').replace(/\/$/, '') || '/';
+const homeHref = getRelativeLocaleUrl(locale, '/');
+const writeHref = getRelativeLocaleUrl(locale, 'write');
+const contactHref = getRelativeLocaleUrl(locale, 'contact');
+const enHref = getRelativeLocaleUrl('en', path);
+const esHref = getRelativeLocaleUrl('es', path);
+---
+
+<nav class="nav-bar">
+  <a href={homeHref} class="nav-brand">Dario Farzati</a>
+  <div class="nav-items">
+    <a href={writeHref} class="nav-link">{copy.nav.writing}</a>
+    <a href={contactHref} class="nav-link">{copy.nav.contact}</a>
+    <div class="nav-social-group">
+      <a href="https://github.com/lufzle" target="_blank" rel="noopener" class="nav-pill">GitHub</a>
+      <a href="https://linkedin.com/in/dariofarzati" target="_blank" rel="noopener" class="nav-pill">LinkedIn</a>
+    </div>
+    <div class="lang-switch" role="group" aria-label={copy.nav.langLabel}>
+      <a
+        href={enHref}
+        data-set-lang="en"
+        class:list={['lang-opt', { active: locale === 'en' }]}
+        aria-current={locale === 'en' ? 'true' : undefined}
+      >
+        EN
+      </a>
+      <span class="lang-sep" aria-hidden="true">|</span>
+      <a
+        href={esHref}
+        data-set-lang="es"
+        class:list={['lang-opt', { active: locale === 'es' }]}
+        aria-current={locale === 'es' ? 'true' : undefined}
+      >
+        ES
+      </a>
+    </div>
+    <ThemeToggle />
+  </div>
+</nav>
+
+<style>
+  .nav-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 40px;
+    font-size: 15.5px;
+  }
+
+  @media (max-width: 600px) {
+    .nav-bar {
+      padding: 20px 24px;
+    }
+  }
+
+  .nav-brand {
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    flex: none;
+    color: var(--fg);
+  }
+
+  .nav-items {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+
+  @media (max-width: 600px) {
+    .nav-items {
+      gap: 16px;
+    }
+  }
+
+  .nav-link {
+    color: var(--fg2);
+    transition: color 0.2s;
+  }
+
+  .nav-link:hover {
+    color: var(--fg);
+  }
+
+  .nav-social-group {
+    display: flex;
+    gap: 8px;
+  }
+
+  @media (max-width: 640px) {
+    .nav-social-group {
+      display: none;
+    }
+  }
+
+  .nav-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--fg2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 12px;
+    transition:
+      border-color 0.2s,
+      color 0.2s;
+  }
+
+  .nav-pill:hover {
+    color: var(--fg);
+    border-color: var(--fg3);
+  }
+
+  .lang-switch {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+  }
+
+  .lang-opt {
+    color: var(--fg3);
+    transition: color 0.2s;
+  }
+
+  .lang-opt:hover,
+  .lang-opt.active {
+    color: var(--fg);
+  }
+
+  .lang-sep {
+    color: var(--fg3);
+    user-select: none;
+  }
+</style>

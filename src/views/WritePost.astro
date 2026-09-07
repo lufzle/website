@@ -1,0 +1,204 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import Layout from '../layouts/Layout.astro';
+import { asLocale, useUi } from '../i18n/ui';
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const locale = asLocale(Astro.currentLocale);
+const copy = useUi(locale);
+const writeHref = getRelativeLocaleUrl(locale, 'write');
+---
+
+<Layout title={`${post.data.title} — Dario Farzati`} description={post.data.summary}>
+  <article class="post-article">
+    <a href={writeHref} class="back-link mono">{copy.write.back}</a>
+
+    <header class="post-header">
+      <h1 class="post-title">{post.data.title}</h1>
+      <div class="post-meta mono">
+        <span>{post.data.date}</span>
+        <span>{post.data.readTime}</span>
+        <span>Dario Farzati</span>
+      </div>
+    </header>
+
+    <div class="post-body">
+      <p class="post-lede">{post.data.lede}</p>
+      <div class="post-content">
+        <Content />
+      </div>
+    </div>
+  </article>
+</Layout>
+
+<style>
+  .post-article {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding-top: clamp(56px, 10vh, 120px);
+  }
+
+  .back-link {
+    font-size: 12px;
+    color: var(--fg3);
+    width: max-content;
+    transition: color 0.2s;
+  }
+
+  .back-link:hover {
+    color: var(--fg);
+  }
+
+  .post-header {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .post-title {
+    margin: 0;
+    font-size: clamp(32px, 5vw, 48px);
+    line-height: 1.1;
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    overflow-wrap: break-word;
+  }
+
+  .post-meta {
+    font-size: 12px;
+    color: var(--fg3);
+    display: flex;
+    gap: 16px;
+  }
+
+  .mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .post-body {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    border-top: 1px solid var(--line);
+    padding-top: 32px;
+    font-size: 19.5px;
+    line-height: 1.7;
+  }
+
+  .post-lede {
+    margin: 0;
+    font-size: 22.5px;
+    color: var(--fg);
+  }
+
+  .post-content :global(p) {
+    margin: 0 0 24px 0;
+    color: var(--fg2);
+  }
+
+  .post-content :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .post-content :global(h2) {
+    margin: 40px 0 16px;
+    font-size: 22.5px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    color: var(--fg);
+  }
+
+  .post-content :global(blockquote) {
+    margin: 0 0 24px;
+    padding: 0 0 0 16px;
+    border-left: 2px solid var(--line);
+    color: var(--fg2);
+  }
+
+  .post-content :global(blockquote p) {
+    margin: 0 0 12px;
+  }
+
+  .post-content :global(blockquote p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .post-content :global(p:has(> img:only-child)) {
+    margin: 8px 0 32px;
+  }
+
+  .post-content :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .post-content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 24px;
+    font-size: 16.5px;
+  }
+
+  .post-content :global(th),
+  .post-content :global(td) {
+    text-align: left;
+    padding: 8px 12px 8px 0;
+    border-bottom: 1px solid var(--line);
+    color: var(--fg2);
+  }
+
+  .post-content :global(th) {
+    color: var(--fg3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .post-content :global(a) {
+    border-bottom: 1px solid var(--line);
+    transition:
+      border-color 0.2s,
+      color 0.2s;
+  }
+
+  .post-content :global(a:hover) {
+    border-color: var(--c);
+  }
+
+  .post-content :global(code) {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85em;
+    color: var(--fg);
+  }
+
+  .post-content :global(ol),
+  .post-content :global(ul) {
+    margin: 0 0 24px;
+    padding-left: 1.3em;
+    color: var(--fg2);
+  }
+
+  .post-content :global(li) {
+    margin: 0 0 10px;
+  }
+
+  .post-content :global(li:last-child) {
+    margin-bottom: 0;
+  }
+
+  .post-content :global(strong) {
+    color: var(--fg);
+    font-weight: 500;
+  }
+</style>

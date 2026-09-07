@@ -1,0 +1,371 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import Background from '../components/Background.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { asLocale, useUi } from '../i18n/ui';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const locale = asLocale(Astro.currentLocale);
+const copy = useUi(locale);
+const { title = copy.meta.title, description = copy.meta.description } = Astro.props;
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <!-- Preload critical fonts locally to eliminate FOUT (Flash of Unstyled Text) -->
+    <link
+      rel="preload"
+      href="/fonts/onest-latin-400-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/onest-latin-500-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/jetbrains-mono-latin-400-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/WebPlus_IBM_CGA.woff"
+      as="font"
+      type="font/woff"
+      crossorigin
+    />
+
+    <ClientRouter />
+
+    <script is:inline>
+      (function () {
+        function readCookie(name) {
+          var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+          return match ? decodeURIComponent(match[1]) : null;
+        }
+
+        function applyInitialTheme() {
+          try {
+            if (document.documentElement.dataset.theme === 'cga') return;
+            if (window.__dfThemeState && window.__dfThemeState.theme === 'cga') {
+              document.documentElement.dataset.theme = 'cga';
+              return;
+            }
+            var t = readCookie('df-theme');
+            if (t !== 'light' && t !== 'dark') {
+              t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+            }
+            document.documentElement.dataset.theme = t;
+          } catch (e) {}
+        }
+
+        function preferLocale() {
+          try {
+            var lang = readCookie('df-lang');
+            if (lang !== 'en' && lang !== 'es') return;
+            var path = location.pathname;
+            var current = path === '/es' || path.indexOf('/es/') === 0 ? 'es' : 'en';
+            if (lang === current) return;
+            var rest = path.replace(/^\/es(?=\/|$)/, '') || '/';
+            var next = lang === 'es' ? (rest === '/' ? '/es/' : '/es' + rest) : rest;
+            if (next !== path) location.replace(next + location.search + location.hash);
+          } catch (e) {}
+        }
+
+        preferLocale();
+        applyInitialTheme();
+        document.addEventListener('astro:after-swap', function () {
+          preferLocale();
+          applyInitialTheme();
+        });
+      })();
+    </script>
+
+    <style is:global>
+      @font-face {
+        font-family: 'Onest';
+        font-style: normal;
+        font-weight: 300;
+        font-display: swap;
+        src: url('/fonts/onest-latin-300-normal.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Onest';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/onest-latin-400-normal.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Onest';
+        font-style: normal;
+        font-weight: 500;
+        font-display: swap;
+        src: url('/fonts/onest-latin-500-normal.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Onest';
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: url('/fonts/onest-latin-600-normal.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'JetBrains Mono';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/jetbrains-mono-latin-400-normal.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'JetBrains Mono';
+        font-style: normal;
+        font-weight: 500;
+        font-display: swap;
+        src: url('/fonts/jetbrains-mono-latin-500-normal.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Web IBM CGA';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/WebPlus_IBM_CGA.woff') format('woff');
+      }
+
+      :root,
+      [data-theme='dark'] {
+        --fg: #e8e7e3;
+        --fg2: #a3a29d;
+        --fg3: #6f6e69;
+        --line: rgba(255, 255, 255, 0.09);
+        --card: rgba(255, 255, 255, 0.025);
+        --c: oklch(0.75 0.11 210);
+        --m: oklch(0.71 0.15 350);
+        --y: oklch(0.82 0.13 92);
+        --bg-color: #0e0e0f;
+        --bg-gradient: linear-gradient(248deg, #0d0d10 0%, transparent 42%, transparent 68%, #0f0f11 100%), linear-gradient(247deg, #171718 0%, transparent 22%, transparent 69%, #0d0d10 100%), linear-gradient(118deg, #0b0c0d 0%, transparent 22%, transparent 65%, #141416 100%), linear-gradient(190deg, #0f0f11, #0b0c0d);
+        --base-font-size: 20px;
+        color-scheme: dark;
+      }
+      [data-theme='light'] {
+        --fg: #1c1c1a;
+        --fg2: #5a5955;
+        --fg3: #8d8c87;
+        --line: rgba(0, 0, 0, 0.1);
+        --card: rgba(0, 0, 0, 0.02);
+        --c: oklch(0.52 0.11 210);
+        --m: oklch(0.5 0.15 350);
+        --y: oklch(0.58 0.11 92);
+        --bg-color: #f7f6f3;
+        --bg-gradient: linear-gradient(205deg, #f1f0ed 0%, transparent 37%, transparent 83%, #f7f6f3 100%), linear-gradient(290deg, #f1f0ed 0%, transparent 39%, transparent 77%, #f7f6f3 100%), linear-gradient(317deg, #f7f6f3 0%, transparent 25%, transparent 64%, #f7f6f3 100%), linear-gradient(118deg, #f3f2ef, #f7f6f3);
+        --base-font-size: 20px;
+        color-scheme: light;
+      }
+      [data-theme='cga'] {
+        --fg: #ffffff;
+        --fg2: #aaaaaa;
+        --fg3: #55ffff;
+        --line: #555555;
+        --card: #000000;
+        --c: #55ffff;
+        --m: #ff55ff;
+        --y: #ffff55;
+        --bg-color: #000000;
+        --bg-gradient: #000000;
+        --base-font-size: 16px;
+        color-scheme: dark;
+      }
+
+      #bg-layer {
+        background: var(--bg-gradient);
+      }
+      @keyframes blink {
+        0%,
+        49% {
+          opacity: 1;
+        }
+        50%,
+        100% {
+          opacity: 0;
+        }
+      }
+      @keyframes horizon {
+        from {
+          -webkit-mask-position: 0 0;
+          mask-position: 0 0;
+        }
+        to {
+          -webkit-mask-position: 0 100%;
+          mask-position: 0 100%;
+        }
+      }
+      @keyframes sunrise {
+        from {
+          filter: brightness(1.9) saturate(1.5) sepia(0.3);
+        }
+        60% {
+          filter: brightness(1.15) saturate(1.1) sepia(0.1);
+        }
+        to {
+          filter: none;
+        }
+      }
+      @keyframes sunset {
+        from {
+          filter: none;
+        }
+        to {
+          filter: brightness(0.55) saturate(1.4) sepia(0.35);
+        }
+      }
+      ::view-transition-old(root),
+      ::view-transition-new(root) {
+        mix-blend-mode: normal;
+        animation: none;
+      }
+      html[data-vt='light']::view-transition-new(root) {
+        -webkit-mask-image: linear-gradient(to bottom, transparent 0 36%, #000 50% 100%);
+        mask-image: linear-gradient(to bottom, transparent 0 36%, #000 50% 100%);
+        -webkit-mask-size: 100% 300%;
+        mask-size: 100% 300%;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        animation:
+          horizon 0.55s cubic-bezier(0.4, 0, 0.2, 1) both,
+          sunrise 0.55s ease-out both;
+      }
+      html[data-vt='light']::view-transition-old(root) {
+        animation: sunset 0.55s ease-in both;
+      }
+      html[data-vt='dark']::view-transition-new(root) {
+        -webkit-mask-image: linear-gradient(to bottom, transparent 0 36%, #000 50% 100%);
+        mask-image: linear-gradient(to bottom, transparent 0 36%, #000 50% 100%);
+        -webkit-mask-size: 100% 300%;
+        mask-size: 100% 300%;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        animation: horizon 0.55s cubic-bezier(0.4, 0, 0.2, 1) both;
+      }
+      html[data-vt='dark']::view-transition-old(root) {
+        animation: sunset 0.55s ease-in both;
+      }
+      [data-theme='cga'] #portrait-normal {
+        display: none !important;
+      }
+      [data-theme='cga'] #portrait-cga {
+        display: block !important;
+      }
+      [data-theme='cga'] #cga-cursor {
+        display: inline !important;
+      }
+      [data-theme='cga'] #cga-scanlines {
+        display: block !important;
+      }
+      [data-theme='cga'] * {
+        font-family: 'Web IBM CGA', monospace !important;
+        letter-spacing: 0 !important;
+        border-radius: 0 !important;
+        text-transform: none !important;
+        font-weight: 400 !important;
+        transition: none !important;
+        -webkit-font-smoothing: none;
+        font-smooth: never;
+      }
+      [data-theme='cga'] *:not(h1) {
+        font-size: 16px !important;
+        line-height: 24px !important;
+      }
+      [data-theme='cga'] h1 {
+        font-size: 32px !important;
+        line-height: 40px !important;
+      }
+      [data-theme='cga'] main,
+      [data-theme='cga'] footer {
+        max-width: 640px !important;
+      }
+      [data-theme='cga'] img {
+        image-rendering: pixelated !important;
+        border: none !important;
+      }
+      [data-theme='cga'] a:hover {
+        color: #ffff55;
+      }
+
+      html,
+      body {
+        margin: 0;
+        background: var(--bg-color, #0e0e0f);
+        font-family: 'Onest', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        font-size: var(--base-font-size, 20px);
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: var(--fg);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      a:hover {
+        color: var(--c);
+      }
+      ::selection {
+        background: oklch(0.75 0.11 210 / 0.35);
+      }
+    </style>
+  </head>
+  <body>
+    <Background />
+    <div
+      style="position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh;color:var(--fg);font-size:var(--base-font-size, 20px);line-height:1.6;font-weight:400;text-wrap:pretty"
+    >
+      <Nav />
+      <main style="flex:1;width:100%;max-width:680px;margin:0 auto;padding:0 32px 96px;box-sizing:border-box">
+        <slot />
+      </main>
+      <Footer />
+    </div>
+
+    <script>
+      import { initTheme } from '../scripts/theme';
+      import { writeCookie, LANG_COOKIE } from '../scripts/cookies';
+
+      function bindLangSwitch() {
+        document.querySelectorAll<HTMLAnchorElement>('[data-set-lang]').forEach((el) => {
+          if (el.dataset.bound === 'true') return;
+          el.dataset.bound = 'true';
+          el.addEventListener('click', () => {
+            const lang = el.getAttribute('data-set-lang');
+            if (lang === 'en' || lang === 'es') writeCookie(LANG_COOKIE, lang);
+          });
+        });
+      }
+
+      initTheme();
+      bindLangSwitch();
+      document.addEventListener('astro:page-load', () => {
+        initTheme();
+        bindLangSwitch();
+      });
+    </script>
+  </body>
+</html>

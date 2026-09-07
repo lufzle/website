@@ -1,0 +1,127 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { asLocale, useUi } from '../i18n/ui';
+
+const copy = useUi(asLocale(Astro.currentLocale));
+---
+
+<Layout title={copy.privacy.title}>
+  <section class="privacy-section">
+    <header class="privacy-header">
+      <div class="privacy-tag mono">{copy.privacy.tag}</div>
+      <h1 class="privacy-title">{copy.privacy.heading}</h1>
+      <div class="privacy-updated mono">{copy.privacy.updated}</div>
+    </header>
+
+    <div class="privacy-content">
+      <div class="policy-block">
+        <h2 class="policy-heading">{copy.privacy.who}</h2>
+        <p class="policy-text">
+          {copy.privacy.whoBody}
+          <a href="mailto:dario@lufzle.dev" class="underline-link">dario@lufzle.dev</a>.
+        </p>
+      </div>
+
+      <div class="policy-block">
+        <h2 class="policy-heading">{copy.privacy.what}</h2>
+        <p class="policy-text">{copy.privacy.whatBody}</p>
+      </div>
+
+      <div class="policy-block">
+        <h2 class="policy-heading">{copy.privacy.theme}</h2>
+        <p class="policy-text">{copy.privacy.themeBody}</p>
+      </div>
+
+      <div class="policy-block">
+        <h2 class="policy-heading">{copy.privacy.email}</h2>
+        <p class="policy-text">{copy.privacy.emailBody}</p>
+      </div>
+
+      <div class="policy-block">
+        <h2 class="policy-heading">{copy.privacy.links}</h2>
+        <p class="policy-text">{copy.privacy.linksBody}</p>
+      </div>
+
+      <div class="policy-block">
+        <h2 class="policy-heading">{copy.privacy.rights}</h2>
+        <p class="policy-text">{copy.privacy.rightsBody}</p>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .privacy-section {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    padding-top: clamp(56px, 10vh, 120px);
+  }
+
+  .privacy-header {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .privacy-tag {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg3);
+  }
+
+  .mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .privacy-title {
+    margin: 0;
+    font-size: clamp(38px, 6vw, 58px);
+    line-height: 1.05;
+    font-weight: 500;
+    letter-spacing: -0.025em;
+  }
+
+  .privacy-updated {
+    font-size: 12px;
+    color: var(--fg3);
+  }
+
+  .privacy-content {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    border-top: 1px solid var(--line);
+    padding-top: 32px;
+    font-size: 18px;
+  }
+
+  .policy-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .policy-heading {
+    margin: 0;
+    font-size: 19.5px;
+    font-weight: 500;
+  }
+
+  .policy-text {
+    margin: 0;
+    color: var(--fg2);
+  }
+
+  .underline-link {
+    border-bottom: 1px solid var(--line);
+    transition:
+      border-color 0.2s,
+      color 0.2s;
+  }
+
+  .underline-link:hover {
+    border-color: var(--c);
+  }
+</style>

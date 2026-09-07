@@ -1,0 +1,110 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { asLocale, useUi } from '../i18n/ui';
+import { postsForLocale, postSlug } from '../i18n/posts';
+
+const locale = asLocale(Astro.currentLocale);
+const copy = useUi(locale);
+const posts = await postsForLocale(locale);
+---
+
+<Layout title={copy.write.title}>
+  <section class="writing-section">
+    <header class="writing-header">
+      <h1 class="writing-title mono">{copy.write.heading}</h1>
+    </header>
+
+    <div class="posts-list">
+      {
+        posts.map((p) => (
+          <a href={getRelativeLocaleUrl(locale, `write/${postSlug(p.id)}`)} class="post-item">
+            <span class="post-info">
+              <span class="post-title">{p.data.title}</span>
+              <span class="post-summary">{p.data.summary}</span>
+            </span>
+            <span class="post-meta mono">
+              <span>{p.data.date}</span>
+              <span>{p.data.readTime}</span>
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .writing-section {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    padding-top: clamp(56px, 10vh, 120px);
+  }
+
+  .writing-header {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .writing-title {
+    margin: 0;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--y);
+    font-weight: 400;
+  }
+
+  .mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .posts-list {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--line);
+  }
+
+  .post-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: baseline;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--line);
+    transition: color 0.2s;
+  }
+
+  .post-item:hover {
+    color: var(--fg);
+  }
+
+  .post-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .post-title {
+    font-size: 21.5px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .post-summary {
+    font-size: 17.5px;
+    color: var(--fg2);
+  }
+
+  .post-meta {
+    font-size: 12px;
+    color: var(--fg3);
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    white-space: nowrap;
+  }
+</style>

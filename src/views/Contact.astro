@@ -1,0 +1,186 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { asLocale, useUi } from '../i18n/ui';
+
+const copy = useUi(asLocale(Astro.currentLocale));
+---
+
+<Layout title={copy.contact.title}>
+  <section class="contact-section">
+    <header class="contact-header">
+      <div class="contact-tag mono">{copy.contact.tag}</div>
+      <h1 class="contact-title">{copy.contact.heading}</h1>
+      <p class="contact-lede">{copy.contact.lede}</p>
+      <a href="mailto:dario@lufzle.dev" class="contact-email">dario@lufzle.dev</a>
+    </header>
+
+    <section class="contact-details-section">
+      <div class="details-heading mono">{copy.contact.about}</div>
+
+      <div class="bullet-row">
+        <span class="bullet-dot bg-cyan"></span>
+        <p class="bullet-text">
+          <span class="bold">{copy.contact.engagements}</span>
+          <span class="muted"> {copy.contact.engagementsBody}</span>
+        </p>
+      </div>
+
+      <div class="bullet-row">
+        <span class="bullet-dot bg-magenta"></span>
+        <p class="bullet-text">
+          <span class="bold">{copy.contact.advisory}</span>
+          <span class="muted"> {copy.contact.advisoryBody}</span>
+        </p>
+      </div>
+
+      <div class="bullet-row">
+        <span class="bullet-dot bg-yellow"></span>
+        <p class="bullet-text">
+          <span class="bold">{copy.contact.speaking}</span>
+          <span class="muted"> {copy.contact.speakingBody}</span>
+        </p>
+      </div>
+    </section>
+
+    <section class="contact-details-section">
+      <div class="details-heading mono">{copy.contact.elsewhere}</div>
+      <p class="elsewhere-item">
+        <a href="https://linkedin.com/in/dariofarzati" target="_blank" rel="noopener" class="underline-link">LinkedIn</a>
+        <span class="muted">{copy.contact.linkedin}</span>
+      </p>
+      <p class="elsewhere-item">
+        <a href="https://github.com/lufzle" target="_blank" rel="noopener" class="underline-link">GitHub</a>
+        <span class="muted">{copy.contact.github}</span>
+      </p>
+      <p class="elsewhere-item">
+        <a href="https://sinumo.com" target="_blank" rel="noopener" class="underline-link">Sinumo</a>
+        <span class="muted">{copy.contact.sinumo}</span>
+      </p>
+    </section>
+  </section>
+</Layout>
+
+<style>
+  .contact-section {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+    padding-top: clamp(56px, 10vh, 120px);
+  }
+
+  .contact-header {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .contact-tag {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c);
+  }
+
+  .mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .contact-title {
+    margin: 0;
+    font-size: clamp(38px, 6vw, 58px);
+    line-height: 1.05;
+    font-weight: 500;
+    letter-spacing: -0.025em;
+  }
+
+  .contact-lede {
+    margin: 0;
+    color: var(--fg2);
+    font-size: 22px;
+    max-width: 540px;
+  }
+
+  .contact-email {
+    font-size: 24px;
+    font-weight: 500;
+    width: max-content;
+    border-bottom: 1px solid var(--fg);
+    padding-bottom: 2px;
+    letter-spacing: -0.01em;
+    transition:
+      border-color 0.2s,
+      color 0.2s;
+  }
+
+  .contact-email:hover {
+    border-color: var(--c);
+  }
+
+  .contact-details-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border-top: 1px solid var(--line);
+    padding-top: 32px;
+  }
+
+  .details-heading {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg3);
+  }
+
+  .bullet-row {
+    display: grid;
+    grid-template-columns: 10px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+
+  .bullet-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-top: 11px;
+  }
+
+  .bg-cyan {
+    background: var(--c);
+  }
+
+  .bg-magenta {
+    background: var(--m);
+  }
+
+  .bg-yellow {
+    background: var(--y);
+  }
+
+  .bullet-text {
+    margin: 0;
+  }
+
+  .bold {
+    font-weight: 500;
+  }
+
+  .muted {
+    color: var(--fg2);
+  }
+
+  .elsewhere-item {
+    margin: 0;
+  }
+
+  .underline-link {
+    border-bottom: 1px solid var(--line);
+    transition:
+      border-color 0.2s,
+      color 0.2s;
+  }
+
+  .underline-link:hover {
+    border-color: var(--c);
+  }
+</style>
