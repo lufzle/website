@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#030405">
+    <meta name="description" content="foldelight gives the MacBook lid the folding-glass effect it deserves.">
+    <title>foldelight — the MacBook folding effect</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%23191b1f'/%3E%3Cpath d='M12 16l20 7v26l-20-8z' fill='%237ac0c5'/%3E%3Cpath d='M32 23l21-11-2 27-19 10z' fill='%23c783a5'/%3E%3Cpath d='M32 49l19-10 9 7-20 11z' fill='%23c9aa6d'/%3E%3C/svg%3E">
+    <link rel="preload" href="./assets/lock-screen.png" as="image">
+    <link rel="stylesheet" href="./styles.css">
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <header class="masthead" aria-label="foldelight">
+      <a class="brand" href="#top" aria-label="foldelight home">
+        <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">
+          <path d="M7 14 32 23v32L7 45Z" fill="var(--cyan)"/>
+          <path d="m32 23 26-14-3 34-23 12Z" fill="var(--magenta)"/>
+          <path d="m32 55 23-12 8 7-25 13Z" fill="var(--gold)"/>
+        </svg>
+        <span>foldelight</span>
+      </a>
+      <span class="license">AGPL-3.0</span>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <h1 id="hero-title">
+          <span>The MacBook has folded for 35 years.</span>
+          <span>iPhone folds for one day and gets an effect.</span>
+        </h1>
+        <a class="scroll-cue" href="#the-fold">
+          <span>Open the lid</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg>
+        </a>
+      </section>
+
+      <section class="fold-scroll" id="the-fold" aria-label="Scroll-controlled MacBook fold">
+        <div class="fold-stage">
+          <canvas id="fold-canvas" aria-label="A MacBook lock screen opening as the page scrolls"></canvas>
+          <img class="fallback-poster" src="./assets/lock-screen.png" alt="Blue foldelight lock screen">
+          <p class="gpu-status" role="status" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <section class="closing" id="download" aria-labelledby="closing-title">
+        <div class="closing-inner">
+          <h2 id="closing-title">
+            <span>Folding since 1991.</span>
+            <span>Effect since today.</span>
+          </h2>
+          <a class="download" href="./downloads/foldelight-macos.zip" download>
+            <span>Download for macOS</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 5-5m-5 5-5-5M5 20h14"/></svg>
+          </a>
+        </div>
+        <footer>
+          <span>foldelight</span>
+          <span>lufzle · Dario Farzati</span>
+          <a href="https://www.gnu.org/licenses/agpl-3.0.html">AGPL-3.0</a>
+        </footer>
+      </section>
+    </main>
+  </body>
+</html>
