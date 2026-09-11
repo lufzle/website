@@ -158,11 +158,6 @@ a {
   text-wrap: balance;
 }
 
-.hero h1 span,
-.closing h2 span {
-  display: block;
-}
-
 .hero-subline {
   max-width: 47rem;
   margin: 0;
@@ -285,10 +280,6 @@ a {
 
 .closing h2 {
   max-width: 12ch;
-}
-
-.closing h2 span:last-child {
-  color: var(--cyan);
 }
 
 .download {
