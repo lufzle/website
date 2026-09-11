@@ -323,6 +323,9 @@ footer {
   right: var(--page-pad);
   bottom: max(1.5rem, env(safe-area-inset-bottom));
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
   color: #686c71;
   font-size: 0.75rem;
 }
@@ -334,6 +337,90 @@ footer p {
 footer a {
   color: inherit;
   text-underline-offset: 0.2em;
+}
+
+footer nav {
+  display: flex;
+  gap: 1rem;
+}
+
+.legal-page {
+  min-height: 100svh;
+  background:
+    radial-gradient(circle at 85% 10%, rgba(199, 131, 165, 0.08), transparent 32rem),
+    radial-gradient(circle at 8% 78%, rgba(122, 192, 197, 0.07), transparent 30rem),
+    var(--black);
+}
+
+.legal-page .masthead {
+  mix-blend-mode: normal;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent);
+}
+
+.legal-shell {
+  width: min(calc(100% - 2 * var(--page-pad)), 50rem);
+  margin: 0 auto;
+  padding: clamp(8rem, 15vw, 11rem) 0 5rem;
+}
+
+.legal-shell h1 {
+  max-width: 10ch;
+  margin: 0 0 1.5rem;
+  font-size: clamp(4rem, 10vw, 7.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.065em;
+}
+
+.legal-updated {
+  margin: 0 0 clamp(4rem, 9vw, 7rem);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.legal-section {
+  padding: clamp(2.5rem, 6vw, 4.5rem) 0;
+  border-top: 1px solid rgba(240, 239, 235, 0.13);
+}
+
+.legal-section h2 {
+  margin: 0 0 1.5rem;
+  color: var(--paper);
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+}
+
+.legal-section p,
+.legal-section li {
+  color: #b7b8ba;
+  font-size: clamp(1rem, 1.8vw, 1.12rem);
+  line-height: 1.72;
+}
+
+.legal-section p {
+  margin: 0 0 1rem;
+}
+
+.legal-section ul {
+  margin: 1.5rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.legal-section li + li {
+  margin-top: 0.75rem;
+}
+
+.legal-section a {
+  color: var(--paper);
+  text-underline-offset: 0.2em;
+}
+
+.legal-footer {
+  position: static;
+  width: min(calc(100% - 2 * var(--page-pad)), 50rem);
+  margin: 0 auto;
+  padding: 2rem 0 max(2rem, env(safe-area-inset-bottom));
+  border-top: 1px solid rgba(240, 239, 235, 0.13);
 }
 
 @media (max-width: 700px) {
