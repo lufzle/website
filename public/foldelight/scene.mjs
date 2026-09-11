@@ -5,7 +5,7 @@ export const LAPTOP = Object.freeze({
   depth: 2.1,
   lidHeight: 2.06,
   lidThickness: .044,
-  hingeY: .104,
+  hingeY: .083,
   hingeZ: -1.02,
   maximumAngle: 100,
 });
@@ -44,11 +44,39 @@ export function multiply(a, b) {
   return out;
 }
 
-export function cameraForAspect(aspect) {
-  const fov = 36 * Math.PI / 180;
-  const distance = Math.max(5.65, 1.91 / (Math.max(aspect, .1) * Math.tan(fov / 2)));
-  const target = [0, .82, -.08];
-  const direction = normalize([.055, .30, 1]);
+export function cameraForAspect(aspect, angle = 100) {
+  // Fitted to the supplied studio reference at a 32.875° lid opening.
+  // A low, centered long lens preserves the shallow keyboard and straight horizon.
+  const fov = 12.626726 * Math.PI / 180;
+  const direction = normalize([0, .1087032, .99407425]);
+  const safeAspect = Math.max(.1, aspect);
+  const f = 1 / Math.tan(fov / 2);
+  const bottom = -.26 - .482 * smooth((safeAspect - .65) / 1.2);
+  const k = bottom / f, [ , s, c ] = direction;
+  const intercept = -.05 - 1.13*(s-k*c)/(c+k*s);
+  const slope = -k/(c+k*s);
+  const targetHeight = (distance) => intercept+slope*distance;
+  const lid = lidMatrix(angle);
+  const bounds = [];
+  for (const x of [-1.6, 1.6]) {
+    for (const y of [-.05, .05]) for (const z of [-1.05, 1.05]) bounds.push([x,y,z]);
+    for (const y of [0, LAPTOP.lidHeight]) for (const z of [-.022, .033]) bounds.push(transformPoint(lid,[x,y,z]));
+  }
+  // Projected bounds give linear inequalities in camera distance. Solve them
+  // directly, keeping the bottom edge anchored as the camera recedes.
+  let widthDistance=2, heightDistance=2;
+  const depthSlope=1+s*slope;
+  for(const [x,y,z] of bounds) {
+    const depthIntercept=s*(intercept-y)-c*(z+.08);
+    const top=f*(c*(y-intercept)-s*(z+.08));
+    widthDistance=Math.max(widthDistance,(Math.abs(f*x/(safeAspect*.855))-depthIntercept)/depthSlope);
+    heightDistance=Math.max(heightDistance,(top-.72*depthIntercept)/(.72*depthSlope+f*c*slope));
+  }
+  // A smooth maximum eases the switch from width to height framing. It always
+  // stays outside both bounds, so smoothing cannot clip the lid or chassis.
+  const transition=Math.max(.4-Math.abs(widthDistance-heightDistance),0);
+  const distance=Math.max(widthDistance,heightDistance)+transition*transition/1.6;
+  const target = [0, targetHeight(distance), -.08];
   const eye = target.map((v, i) => v + direction[i] * distance);
   const right = normalize(cross([0, 1, 0], direction));
   const up = cross(direction, right);
@@ -58,22 +86,27 @@ export function cameraForAspect(aspect) {
     right[2], up[2], direction[2], 0,
     -dot(right, eye), -dot(up, eye), -dot(direction, eye), 1,
   ]);
-  const near = .1, far = 100, f = 1 / Math.tan(fov / 2);
+  const near = .1, far = 200;
   // Zero-to-one depth, shared with WebGPU. The GL vertex shader remaps Z.
   const projection = new Float32Array([
-    f / aspect, 0, 0, 0, 0, f, 0, 0,
+    f / safeAspect, 0, 0, 0, 0, f, 0, 0,
     0, 0, far / (near - far), -1,
     0, 0, near * far / (near - far), 0,
   ]);
-  return { eye, viewProjection: multiply(projection, view) };
+  return { eye, target, distance, viewProjection: multiply(projection, view) };
 }
 
-function outline(width, height, radius, steps) {
+function outline(width, height, radius, steps, frontScoop = false) {
   const points = [];
   const corners = [[1,1,0],[-1,1,90],[-1,-1,180],[1,-1,270]];
-  for (const [x, y, start] of corners) for (let i = 0; i <= steps; i++) {
-    const angle = (start + i * 90 / steps) * Math.PI / 180;
-    points.push([(width/2-radius)*x + radius*Math.cos(angle), (height/2-radius)*y + radius*Math.sin(angle)]);
+  for (const [x, y, start] of corners) {
+    for (let i = 0; i <= steps; i++) {
+      const angle = (start + i * 90 / steps) * Math.PI / 180;
+      points.push([(width/2-radius)*x + radius*Math.cos(angle), (height/2-radius)*y + radius*Math.sin(angle)]);
+    }
+    if(frontScoop && start===180) {
+      for(const px of [-.34,-.29,-.275,-.26,-.245,-.23,0,.23,.245,.26,.275,.29,.34]) points.push([px,-height/2]);
+    }
   }
   return points;
 }
@@ -81,15 +114,31 @@ function outline(width, height, radius, steps) {
 export function createLaptop() {
   const data = [];
   const labels = [];
-  function body({ width, height, thickness, radius, bevel = Math.min(thickness*.42, .016), center = [0,0,0], material = 0, group = 0, deck = false, atlas = -1, steps = 10 }) {
-    const perimeter = outline(width, height, radius, steps);
+  function body({ width, height, thickness, radius, bevel = Math.min(thickness*.42, .016), center = [0,0,0], material = 0, group = 0, deck = false, atlas = -1, steps = 16, frontScoop = false }) {
+    const perimeter = outline(width, height, radius, steps, frontScoop);
     const count = perimeter.length;
     const uvFor = (p) => {
       const u = p[0]/width + .5, v = .5-p[1]/height;
       return atlas < 0 ? [u,v] : [(atlas%16+u)/16, (Math.floor(atlas/16)+v)/8];
     };
+    const sculpt = (p) => {
+      const weight=(1-smooth((Math.abs(p[0])-.23)/.06))*(1-smooth((p[1]+height/2)/.15))*smooth((p[2]+.005)/.05);
+      return [p[0],p[1]+.040*weight,p[2]-.020*weight];
+    };
     const vertex = (p, n) => {
       const uv = uvFor(p);
+      if(frontScoop) {
+        const original=p;
+        p=sculpt(original);
+        const jacobian=[0,1,2].map(axis=>{
+          const positive=[...original],negative=[...original];
+          positive[axis]+=.0001;negative[axis]-=.0001;
+          const before=sculpt(negative);
+          return sculpt(positive).map((v,i)=>(v-before[i])/.0002);
+        });
+        const cofactors=[cross(jacobian[1],jacobian[2]),cross(jacobian[2],jacobian[0]),cross(jacobian[0],jacobian[1])];
+        n=normalize([0,1,2].map(axis=>n.reduce((sum,v,i)=>sum+v*cofactors[i][axis],0)));
+      }
       const world = deck ? [p[0]+center[0], p[2]+center[1], -p[1]+center[2]] : p.map((v,i)=>v+center[i]);
       const normal = deck ? [n[0],n[2],-n[1]] : n;
       data.push(...world,...normal,...uv,material,group);
@@ -97,7 +146,21 @@ export function createLaptop() {
     const triangle = (a,b,c,na,nb=na,nc=na) => { vertex(a,na); vertex(b,nb); vertex(c,nc); };
     for (const sign of [1,-1]) {
       const z = sign*thickness/2;
-      const face = outline(width-bevel*2,height-bevel*2,Math.max(.001,radius-bevel),steps);
+      const faceAt = (inset) => outline(width-inset*2,height-inset*2,Math.max(.001,radius-inset),steps,frontScoop);
+      let face=faceAt(bevel);
+      // Local face rings keep the finger recess inside the front lip. A fan
+      // directly to the depressed edge would slope the entire palm rest.
+      if(frontScoop && sign>0) {
+        for(const inset of [.045,.080,.120,.175]) {
+          const inside=faceAt(inset);
+          for(let i=0;i<count;i++) {
+            const j=(i+1)%count;
+            triangle([...inside[i],z],[...face[i],z],[...face[j],z],[0,0,1]);
+            triangle([...inside[i],z],[...face[j],z],[...inside[j],z],[0,0,1]);
+          }
+          face=inside;
+        }
+      }
       for (let i=0;i<count;i++) {
         const j=(i+1)%count;
         const a=[0,0,z], b=[...face[i],z], c=[...face[j],z];
@@ -106,11 +169,11 @@ export function createLaptop() {
     }
     // Rounded edge rings produce real metal highlights, including the closed silhouette.
     const rings=[];
-    for(let i=0;i<=6;i++) {
-      const a=-Math.PI/2+i*Math.PI/6;
+    for(let i=0;i<=10;i++) {
+      const a=-Math.PI/2+i*Math.PI/10;
       const inset=bevel*(1-Math.cos(a));
       const z=Math.sign(a)*(thickness/2-bevel)+bevel*Math.sin(a);
-      rings.push({points:outline(width-2*inset,height-2*inset,Math.max(.001,radius-inset),steps),z,a});
+      rings.push({points:outline(width-2*inset,height-2*inset,Math.max(.001,radius-inset),steps,frontScoop),z,a});
     }
     for(let r=0;r<rings.length-1;r++) for(let i=0;i<count;i++) {
       const j=(i+1)%count, lo=rings[r], hi=rings[r+1];
@@ -127,8 +190,8 @@ export function createLaptop() {
     }
   }
 
-  body({width:LAPTOP.width,height:LAPTOP.depth,thickness:.10,radius:.105,center:[0,0,0],deck:true});
-  body({width:2.77,height:1.15,thickness:.006,radius:.065,center:[0,.054,-.38],deck:true,material:1});
+  body({width:LAPTOP.width,height:LAPTOP.depth,thickness:.10,radius:.105,bevel:.018,center:[0,0,0],deck:true,frontScoop:true});
+  body({width:2.77,height:1.15,thickness:.006,radius:.065,center:[0,.048,-.38],deck:true,material:1});
 
   const keyRows = [
     ['esc','F1','F2','F3','F4','F5','F6','F7','F8','F9','F10','F11','F12','◉'],
@@ -146,19 +209,18 @@ export function createLaptop() {
     for(const key of keys) {
       const width=unit*key.weight, atlas=labels.length;
       labels.push(key.label);
-      body({width,height,thickness:.012,radius:.022,bevel:.004,center:[x+width/2,.065,z],deck:true,material:4,atlas,steps:4});
+      body({width,height,thickness:.012,radius:.022,bevel:.004,center:[x+width/2,.049,z],deck:true,material:4,atlas,steps:4});
       x+=width+gap;
     }
   }
-  body({width:1.25,height:.59,thickness:.004,radius:.043,center:[0,.052,.602],deck:true,material:1});
-  body({width:1.234,height:.574,thickness:.004,radius:.037,center:[0,.055,.602],deck:true,material:5});
+  body({width:1.37,height:.69,thickness:.002,radius:.033,center:[0,.051,.584],deck:true,material:1});
+  body({width:1.358,height:.678,thickness:.002,radius:.028,center:[0,.052,.584],deck:true,material:5});
   // Speaker perforations use a filtered material on thin inset strips.
   for(const x of [-1.48,1.48])body({width:.13,height:1.12,thickness:.002,radius:.035,center:[x,.052,-.37],deck:true,material:6});
-  // A slim front opening and rubber feet make the closed state readable.
-  body({width:.47,height:.026,thickness:.002,radius:.012,center:[0,.029,1.051],material:3,steps:6});
+  // The front opening is sculpted into the chassis rather than placed on its face.
   for(const x of [-1.22,1.22])for(const z of [-.76,.76])body({width:.25,height:.20,thickness:.027,radius:.09,center:[x,-.056,z],deck:true,material:3,steps:6});
   // Hinge housings bridge the deck and pivot without projecting above the closed lid.
-  for(const x of [-.95,.95])body({width:.42,height:.080,thickness:.068,radius:.02,center:[x,.076,LAPTOP.hingeZ],material:3});
+  for(const x of [-.95,.95])body({width:.42,height:.080,thickness:.068,radius:.02,center:[x,LAPTOP.hingeY-.028,LAPTOP.hingeZ],material:3});
 
   // All lid surfaces share one rigid transform. The display faces DOWN at zero.
   body({width:3.2,height:LAPTOP.lidHeight,thickness:LAPTOP.lidThickness,radius:.105,bevel:.011,center:[0,LAPTOP.lidHeight/2,0],group:1});
@@ -166,6 +228,12 @@ export function createLaptop() {
   body({width:3.102,height:1.940,thickness:.002,radius:.064,bevel:.0005,center:[0,1.054,.026],group:1,material:2,steps:16});
   body({width:.365,height:.086,thickness:.004,radius:.018,bevel:.001,center:[0,1.995,.029],group:1,material:1});
   body({width:.013,height:.013,thickness:.002,radius:.0065,bevel:.0005,center:[0,1.981,.032],group:1,material:7,steps:8});
+
+  // A matte studio floor catches a broad pool of light and a soft contact shadow.
+  // It shares the depth buffer, so the chassis occludes it at every lid angle.
+  for(const p of [[-16,-.072,-16],[-16,-.072,16],[16,-.072,16],[-16,-.072,-16],[16,-.072,16],[16,-.072,-16]]) {
+    data.push(...p,0,1,0,0,0,8,0);
+  }
 
   return { vertices: new Float32Array(data), labels };
 }

@@ -80,49 +80,72 @@ vec3 displayColor(vec2 uv, vec3 normal, vec3 view) {
   return glass;
 }
 
-vec3 metalLight(vec3 normal, vec3 view, vec3 base, float roughness, float metallic) {
-  vec3 light = normalize(vec3(-.65,1.3,1.4));
-  vec3 halfVector = normalize(view+light);
-  float diffuse = max(dot(normal,light),0.);
-  float sky = .5+.5*normal.y;
-  vec3 ambient = mix(vec3(.22,.235,.255),vec3(.66,.69,.72),sky);
-  vec3 color = base*(ambient*.61 + diffuse*.53);
-  float exponent = mix(150.,12.,roughness);
-  float specular = pow(max(dot(normal,halfVector),0.),exponent);
-  color += mix(vec3(.065),base*.60,metallic)*specular;
-  vec3 reflected = reflect(-view,normal);
-  float strip = exp(-pow((reflected.x+.58)*3.5,2.))*smoothstep(-.3,.45,reflected.y);
-  float rim = pow(1.-max(dot(normal,view),0.),3.);
-  color += vec3(.34,.39,.43)*strip*metallic*.24;
-  color += vec3(.22,.27,.29)*rim*metallic*.50;
-  float grain = fract(sin(dot(vWorld.xz*1500.,vec2(12.9898,78.233)))*43758.5453)-.5;
-  return color + grain*.003*metallic;
+vec3 studioFloor(vec3 world) {
+  vec2 q=abs(world.xz)-vec2(1.49,.94);
+  float distance=min(max(q.x,q.y),0.)+length(max(q,0.))-.11;
+  vec2 poolUV=vec2(world.x/2.35,(world.z-.15)/2.25);
+  float pool=exp(-dot(poolUV,poolUV));
+  float contact=smoothstep(-.025,.25,distance);
+  float front=(world.z-1.21)/.16, side=world.x/1.68;
+  float side2=side*side;
+  float reflection=exp(-front*front-side2*side2*side2);
+  return vec3(.085,.086,.096)*pool*contact+vec3(.011,.012,.014)*reflection*contact;
+}
+
+vec3 metalLight(vec3 normal, vec3 view, vec3 base, float roughness, float metallic, vec2 footprint) {
+  vec3 light=normalize(vec3(-.35,1.8,2.));
+  float diffuse=max(dot(normal,light),0.);
+  vec3 color=base*(.22+.50*max(normal.y,0.)+.24*diffuse);
+  vec3 reflected=reflect(-view,normal);
+  // Broad studio cards reveal the finish without a bright plastic rim.
+  float ceiling=exp((dot(reflected,normalize(vec3(.12,.75,-.8)))-1.)/(.09+.20*roughness));
+  vec2 cardUV=vec2((abs(reflected.x)-.86)/(.12+.07*roughness),(reflected.y-.28)/.57);
+  float sideCards=exp(-dot(cardUV,cardUV));
+  vec2 overheadUV=vec2((reflected.y-.55)/.4,reflected.x/1.3);
+  float overhead=exp(-dot(overheadUV,overheadUV));
+  float fresnel=pow(1.-max(dot(normal,view),0.),4.);
+  vec3 reflectedLight=vec3(.075,.078,.087)*ceiling+vec3(.20,.205,.215)*sideCards
+    +vec3(.023,.024,.028)*overhead;
+  color+=reflectedLight*mix(.10,1.,metallic)*(.65+.35*fresnel);
+  float specular=pow(max(dot(normal,normalize(view+light)),0.),mix(160.,24.,roughness));
+  color+=vec3(.027,.028,.031)*specular;
+  // UVs move with each rigid part. Filter the fine anodized grain when it is subpixel.
+  float grain=fract(sin(dot(vUV*1800.,vec2(12.9898,78.233)))*43758.5453)-.5;
+  float grainVisibility=1.-smoothstep(.5,1.5,max(footprint.x,footprint.y)*1800.);
+  return color+grain*.003*metallic*grainVisibility;
 }
 
 void main() {
   vec3 normal = normalize(vNormal);
   vec3 view = normalize(uEye-vWorld);
+  vec2 footprint=fwidth(vUV);
   vec3 color;
-  if(vMaterial>1.5 && vMaterial<2.5) {
+  if(vMaterial>7.5) {
+    color=studioFloor(vWorld);
+  } else if(vMaterial>1.5 && vMaterial<2.5) {
     color = displayColor(vUV,normal,view);
   } else {
-    vec3 base = vec3(.54,.56,.58);
-    float roughness=.42, metallic=.90;
-    if(vMaterial>.5 && vMaterial<1.5) { base=vec3(.010,.012,.014);roughness=.40;metallic=.16; }
-    if(vMaterial>2.5 && vMaterial<3.5) { base=vec3(.023,.024,.026);roughness=.85;metallic=.02; }
+    vec3 base = vec3(.155,.158,.170);
+    float roughness=.62, metallic=.88;
+    if(vMaterial>.5 && vMaterial<1.5) { base=vec3(.006,.007,.009);roughness=.55;metallic=.08; }
+    if(vMaterial>2.5 && vMaterial<3.5) { base=vec3(.014,.015,.018);roughness=.90;metallic=.02; }
     if(vMaterial>3.5 && vMaterial<4.5) {
-      float label = textureLod(uLabels,vUV,0.).r;
-      base=mix(vec3(.036,.039,.044),vec3(.74,.76,.78),label);
-      roughness=.68;metallic=.04;
+      vec2 labelPixels=footprint*vec2(textureSize(uLabels,0));
+      float labelLevel=log2(max(1.,max(labelPixels.x,labelPixels.y)));
+      float label = textureLod(uLabels,vUV,labelLevel).r;
+      base=mix(vec3(.028,.029,.034),vec3(.28,.29,.31),label);
+      roughness=.78;metallic=.03;
     }
-    if(vMaterial>4.5 && vMaterial<5.5) { base=vec3(.46,.48,.50);roughness=.72;metallic=.65; }
+    if(vMaterial>4.5 && vMaterial<5.5) { base=vec3(.142,.145,.158);roughness=.84;metallic=.60; }
     if(vMaterial>5.5 && vMaterial<6.5) {
-      vec2 cell = fract(vUV*vec2(8.,65.))-.5;
-      float hole=1.-smoothstep(.18,.35,length(cell));
-      base=mix(base,vec3(.030,.034,.037),hole*.82);
+      vec2 cell = fract(vUV*vec2(16.,120.))-.5;
+      float filterWidth=max(footprint.x*16.,footprint.y*120.);
+      float hole=1.-smoothstep(.20,.29+min(.2,filterWidth),length(cell));
+      hole=mix(hole,.22,smoothstep(.45,1.,filterWidth));
+      base=mix(base,vec3(.018,.019,.024),hole*.80);
     }
-    if(vMaterial>6.5) { base=vec3(.012,.023,.043);roughness=.12;metallic=.60; }
-    color=metalLight(normal,view,base,roughness,metallic);
+    if(vMaterial>6.5) { base=vec3(.006,.012,.022);roughness=.18;metallic=.30; }
+    color=metalLight(normal,view,base,roughness,metallic,footprint);
     // Hinge occlusion is local to the keyboard, not painted on the whole scene.
     if(vWorld.y<.08 && normal.y>.5)color*=.77+.23*smoothstep(-.96,-.40,vWorld.z);
   }
@@ -211,49 +234,72 @@ fn displayColor(uv: vec2<f32>, normal: vec3<f32>, view: vec3<f32>) -> vec3<f32> 
   return glass;
 }
 
-fn metalLight(normal: vec3<f32>,view: vec3<f32>,base: vec3<f32>,roughness: f32,metallic: f32,world: vec3<f32>) -> vec3<f32> {
-  let light=normalize(vec3(-.65,1.3,1.4));
-  let halfVector=normalize(view+light);
+fn studioFloor(world: vec3<f32>) -> vec3<f32> {
+  let q=abs(world.xz)-vec2(1.49,.94);
+  let distance=min(max(q.x,q.y),0.)+length(max(q,vec2(0.)))-.11;
+  let poolUV=vec2(world.x/2.35,(world.z-.15)/2.25);
+  let pool=exp(-dot(poolUV,poolUV));
+  let contact=smoothstep(-.025,.25,distance);
+  let front=(world.z-1.21)/.16;
+  let side=world.x/1.68;
+  let side2=side*side;
+  let reflection=exp(-front*front-side2*side2*side2);
+  return vec3(.085,.086,.096)*pool*contact+vec3(.011,.012,.014)*reflection*contact;
+}
+
+fn metalLight(normal: vec3<f32>,view: vec3<f32>,base: vec3<f32>,roughness: f32,metallic: f32,uv: vec2<f32>,footprint: vec2<f32>) -> vec3<f32> {
+  let light=normalize(vec3(-.35,1.8,2.));
   let diffuse=max(dot(normal,light),0.);
-  let sky=.5+.5*normal.y;
-  let ambient=mix(vec3(.22,.235,.255),vec3(.66,.69,.72),sky);
-  var color=base*(ambient*.61+diffuse*.53);
-  let exponent=mix(150.,12.,roughness);
-  let specular=pow(max(dot(normal,halfVector),0.),exponent);
-  color+=mix(vec3(.065),base*.60,metallic)*specular;
+  var color=base*(.22+.50*max(normal.y,0.)+.24*diffuse);
   let reflected=reflect(-view,normal);
-  let strip=exp(-pow((reflected.x+.58)*3.5,2.))*smoothstep(-.3,.45,reflected.y);
-  let rim=pow(1.-max(dot(normal,view),0.),3.);
-  color+=vec3(.34,.39,.43)*strip*metallic*.24;
-  color+=vec3(.22,.27,.29)*rim*metallic*.50;
-  let grain=fract(sin(dot(world.xz*1500.,vec2(12.9898,78.233)))*43758.5453)-.5;
-  return color+grain*.003*metallic;
+  let ceiling=exp((dot(reflected,normalize(vec3(.12,.75,-.8)))-1.)/(.09+.20*roughness));
+  let cardUV=vec2((abs(reflected.x)-.86)/(.12+.07*roughness),(reflected.y-.28)/.57);
+  let sideCards=exp(-dot(cardUV,cardUV));
+  let overheadUV=vec2((reflected.y-.55)/.4,reflected.x/1.3);
+  let overhead=exp(-dot(overheadUV,overheadUV));
+  let fresnel=pow(1.-max(dot(normal,view),0.),4.);
+  let reflectedLight=vec3(.075,.078,.087)*ceiling+vec3(.20,.205,.215)*sideCards
+    +vec3(.023,.024,.028)*overhead;
+  color+=reflectedLight*mix(.10,1.,metallic)*(.65+.35*fresnel);
+  let specular=pow(max(dot(normal,normalize(view+light)),0.),mix(160.,24.,roughness));
+  color+=vec3(.027,.028,.031)*specular;
+  let grain=fract(sin(dot(uv*1800.,vec2(12.9898,78.233)))*43758.5453)-.5;
+  let grainVisibility=1.-smoothstep(.5,1.5,max(footprint.x,footprint.y)*1800.);
+  return color+grain*.003*metallic*grainVisibility;
 }
 
 @fragment fn fragmentMain(input: VertexOutput) -> @location(0) vec4<f32> {
   let normal=normalize(input.normal);
   let view=normalize(uniforms.eye.xyz-input.world);
+  // Derivatives stay outside material branches for WGSL uniformity and stable filtering.
+  let footprint=fwidth(input.uv);
   var color: vec3<f32>;
-  if(input.material>1.5 && input.material<2.5) {
+  if(input.material>7.5) {
+    color=studioFloor(input.world);
+  } else if(input.material>1.5 && input.material<2.5) {
     color=displayColor(input.uv,normal,view);
   } else {
-    var base=vec3(.54,.56,.58);
-    var roughness=.42;
-    var metallic=.90;
-    if(input.material>.5 && input.material<1.5){base=vec3(.010,.012,.014);roughness=.40;metallic=.16;}
-    if(input.material>2.5 && input.material<3.5){base=vec3(.023,.024,.026);roughness=.85;metallic=.02;}
+    var base=vec3(.155,.158,.170);
+    var roughness=.62;
+    var metallic=.88;
+    if(input.material>.5 && input.material<1.5){base=vec3(.006,.007,.009);roughness=.55;metallic=.08;}
+    if(input.material>2.5 && input.material<3.5){base=vec3(.014,.015,.018);roughness=.90;metallic=.02;}
     if(input.material>3.5 && input.material<4.5){
-      let label=textureSampleLevel(labelTexture,textureSampler,input.uv,0.).r;
-      base=mix(vec3(.036,.039,.044),vec3(.74,.76,.78),label);roughness=.68;metallic=.04;
+      let labelPixels=footprint*vec2<f32>(textureDimensions(labelTexture,0));
+      let labelLevel=log2(max(1.,max(labelPixels.x,labelPixels.y)));
+      let label=textureSampleLevel(labelTexture,textureSampler,input.uv,labelLevel).r;
+      base=mix(vec3(.028,.029,.034),vec3(.28,.29,.31),label);roughness=.78;metallic=.03;
     }
-    if(input.material>4.5 && input.material<5.5){base=vec3(.46,.48,.50);roughness=.72;metallic=.65;}
+    if(input.material>4.5 && input.material<5.5){base=vec3(.142,.145,.158);roughness=.84;metallic=.60;}
     if(input.material>5.5 && input.material<6.5){
-      let cell=fract(input.uv*vec2(8.,65.))-.5;
-      let hole=1.-smoothstep(.18,.35,length(cell));
-      base=mix(base,vec3(.030,.034,.037),hole*.82);
+      let cell=fract(input.uv*vec2(16.,120.))-.5;
+      let filterWidth=max(footprint.x*16.,footprint.y*120.);
+      var hole=1.-smoothstep(.20,.29+min(.2,filterWidth),length(cell));
+      hole=mix(hole,.22,smoothstep(.45,1.,filterWidth));
+      base=mix(base,vec3(.018,.019,.024),hole*.80);
     }
-    if(input.material>6.5){base=vec3(.012,.023,.043);roughness=.12;metallic=.60;}
-    color=metalLight(normal,view,base,roughness,metallic,input.world);
+    if(input.material>6.5){base=vec3(.006,.012,.022);roughness=.18;metallic=.30;}
+    color=metalLight(normal,view,base,roughness,metallic,input.uv,footprint);
     if(input.world.y<.08 && normal.y>.5){color*=.77+.23*smoothstep(-.96,-.40,input.world.z);}
   }
   return vec4(max(color,vec3(0.)),1.);

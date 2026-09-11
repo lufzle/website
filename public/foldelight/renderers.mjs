@@ -40,12 +40,13 @@ class SceneRenderer {
   constructor(canvas,count){this.canvas=canvas;this.count=count;this.values=new Float32Array(40);this.camera=null;}
   update(open,time){
     const resized=updateSize(this.canvas);
-    if(resized||!this.camera){
-      this.camera=cameraForAspect(this.canvas.width/this.canvas.height);
+    const angle=angleForProgress(open);
+    if(resized||!this.camera||angle!==this.angle){
+      this.camera=cameraForAspect(this.canvas.width/this.canvas.height,angle);
       this.values.set(this.camera.viewProjection,0);
       this.values.set(this.camera.eye,32);
+      this.angle=angle;
     }
-    const angle=angleForProgress(open);
     this.values.set(lidMatrix(angle),16);
     this.values.set([foldForAngle(angle),time,this.canvas.width,this.canvas.height],36);
     this.canvas.dataset.lidAngle=angle.toFixed(3);
@@ -75,7 +76,7 @@ export class WebGLRenderer extends SceneRenderer {
     const sizes=[3,3,2,1,1],offsets=[0,12,24,32,36];
     sizes.forEach((size,i)=>{gl.enableVertexAttribArray(i);gl.vertexAttribPointer(i,size,gl.FLOAT,false,STRIDE*4,offsets[i]);});
     const textures=[];
-    for(const [unit,images] of [[0,levels],[1,[labels]]]){
+    for(const [unit,images] of [[0,levels],[1,makeMipLevels(labels)]]){
       const texture=gl.createTexture();textures.push(texture);gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,texture);
       gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,images.length>1?gl.LINEAR_MIPMAP_LINEAR:gl.LINEAR);
       gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
@@ -84,7 +85,7 @@ export class WebGLRenderer extends SceneRenderer {
     }
     gl.useProgram(program);gl.uniform1i(gl.getUniformLocation(program,'uScreen'),0);gl.uniform1i(gl.getUniformLocation(program,'uLabels'),1);
     gl.enable(gl.DEPTH_TEST);gl.enable(gl.CULL_FACE);gl.cullFace(gl.BACK);gl.depthFunc(gl.LEQUAL);
-    gl.clearColor(3/255,4/255,5/255,1);
+    gl.clearColor(0,0,0,1);
     const renderer=new WebGLRenderer(target,scene.vertices.length/STRIDE);
     Object.assign(renderer,{gl,program,vao,buffer,textures});
     renderer.locations=Object.fromEntries(['uViewProjection','uLid','uEye','uParams'].map(name=>[name,gl.getUniformLocation(program,name)]));
@@ -137,7 +138,7 @@ export class WebGPURenderer extends SceneRenderer {
       const vertexBuffer=device.createBuffer({size:scene.vertices.byteLength,usage:GPUBufferUsage.VERTEX|GPUBufferUsage.COPY_DST});
       device.queue.writeBuffer(vertexBuffer,0,scene.vertices);
       const textures=[];
-      for(const images of [levels,[labels]]){
+      for(const images of [levels,makeMipLevels(labels)]){
         const texture=device.createTexture({
           size:[images[0].width,images[0].height],mipLevelCount:images.length,format:'rgba8unorm',
           usage:GPUTextureUsage.TEXTURE_BINDING|GPUTextureUsage.COPY_DST|GPUTextureUsage.RENDER_ATTACHMENT,
@@ -174,7 +175,7 @@ export class WebGPURenderer extends SceneRenderer {
     this.device.queue.writeBuffer(this.uniformBuffer,0,this.values);
     const encoder=this.device.createCommandEncoder();
     const pass=encoder.beginRenderPass({
-      colorAttachments:[{view:this.multisample.createView(),resolveTarget:this.context.getCurrentTexture().createView(),clearValue:{r:3/255,g:4/255,b:5/255,a:1},loadOp:'clear',storeOp:'discard'}],
+      colorAttachments:[{view:this.multisample.createView(),resolveTarget:this.context.getCurrentTexture().createView(),clearValue:{r:0,g:0,b:0,a:1},loadOp:'clear',storeOp:'discard'}],
       depthStencilAttachment:{view:this.depth.createView(),depthClearValue:1,depthLoadOp:'clear',depthStoreOp:'discard'},
     });
     pass.setPipeline(this.pipeline);pass.setBindGroup(0,this.bindGroup);pass.setVertexBuffer(0,this.vertexBuffer);pass.draw(this.count);pass.end();
