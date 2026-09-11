@@ -1,25 +1,28 @@
 @font-face {
   font-family: "IBM Plex Sans";
-  src: url("./assets/fonts/IBMPlexSans-Regular.ttf") format("truetype");
+  src: url("./assets/fonts/IBMPlexSans-Regular.woff2") format("woff2"),
+       url("./assets/fonts/IBMPlexSans-Regular.ttf") format("truetype");
   font-style: normal;
   font-weight: 400;
-  font-display: swap;
+  font-display: optional;
 }
 
 @font-face {
   font-family: "IBM Plex Sans";
-  src: url("./assets/fonts/IBMPlexSans-Medium.ttf") format("truetype");
+  src: url("./assets/fonts/IBMPlexSans-Medium.woff2") format("woff2"),
+       url("./assets/fonts/IBMPlexSans-Medium.ttf") format("truetype");
   font-style: normal;
   font-weight: 500;
-  font-display: swap;
+  font-display: optional;
 }
 
 @font-face {
   font-family: "IBM Plex Sans";
-  src: url("./assets/fonts/IBMPlexSans-SemiBold.ttf") format("truetype");
+  src: url("./assets/fonts/IBMPlexSans-SemiBold.woff2") format("woff2"),
+       url("./assets/fonts/IBMPlexSans-SemiBold.ttf") format("truetype");
   font-style: normal;
   font-weight: 600;
-  font-display: swap;
+  font-display: optional;
 }
 
 :root {
@@ -100,11 +103,6 @@ a {
   width: 1.6rem;
   height: 1.6rem;
   overflow: visible;
-}
-
-.license {
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
 }
 
 .github-link {
@@ -424,10 +422,6 @@ footer nav {
 }
 
 @media (max-width: 700px) {
-  .license {
-    display: none;
-  }
-
   .hero,
   .closing {
     align-items: end;
