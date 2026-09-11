@@ -241,6 +241,24 @@ const metaImage = post.data.image
     color: var(--fg);
   }
 
+  .post-content :global(pre.astro-code) {
+    margin: 0 0 24px;
+    padding: 14px 16px;
+    background: var(--code-bg) !important;
+    color: var(--code-fg) !important;
+  }
+
+  .post-content :global(pre.astro-code code) {
+    font-size: inherit;
+    color: inherit;
+  }
+
+  .post-content :global(hr) {
+    margin: 40px 0 48px;
+    border: 0;
+    border-top: 1px solid var(--line);
+  }
+
   .post-content :global(ol),
   .post-content :global(ul) {
     margin: 0 0 24px;
