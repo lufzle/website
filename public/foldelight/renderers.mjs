@@ -1,4 +1,5 @@
 import { STRIDE, angleForProgress, foldForAngle, lidMatrix, cameraForAspect } from './scene.mjs';
+import { APPLE_MARK_PATH, LID_MARK } from './materials.mjs';
 import { vertexGLSL, fragmentGLSL, shaderWGSL } from './shaders.mjs';
 
 export function makeLabelAtlas(labels) {
@@ -11,6 +12,13 @@ export function makeLabelAtlas(labels) {
     ctx.font=`${label.length>2?11:19}px -apple-system, BlinkMacSystemFont, sans-serif`;
     ctx.fillText(label,(i%16)*64+32,Math.floor(i/16)*64+31,56);
   });
+  // Keys read red; the mark uses green in unused rows 5–7. Its mip chain
+  // cannot contaminate the key legends. Padding protects the mark boundary.
+  ctx.save();
+  ctx.translate(LID_MARK.atlasX+96,LID_MARK.atlasY+96);
+  ctx.scale(10,10);ctx.translate(-7,-20.2);
+  ctx.fillStyle='#0f0';ctx.fill(new Path2D(APPLE_MARK_PATH));
+  ctx.restore();
   return atlas;
 }
 

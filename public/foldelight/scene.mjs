@@ -10,6 +10,8 @@ export const LAPTOP = Object.freeze({
   maximumAngle: 100,
 });
 
+// The emitting front face, shared by geometry and both lighting shaders.
+export const SCREEN = Object.freeze({ width: 3.102, height: 1.940, centerY: 1.054, frontZ: .027 });
 export const STRIDE = 10;
 export const clamp01 = (x) => Number.isFinite(x) ? Math.max(0, Math.min(1, x)) : 0;
 export const smooth = (x) => { const t = clamp01(x); return t * t * (3 - 2 * t); };
@@ -225,7 +227,7 @@ export function createLaptop() {
   // All lid surfaces share one rigid transform. The display faces DOWN at zero.
   body({width:3.2,height:LAPTOP.lidHeight,thickness:LAPTOP.lidThickness,radius:.105,bevel:.011,center:[0,LAPTOP.lidHeight/2,0],group:1});
   body({width:3.174,height:2.032,thickness:.003,radius:.095,bevel:.001,center:[0,1.030,.023],group:1,material:1});
-  body({width:3.102,height:1.940,thickness:.002,radius:.064,bevel:.0005,center:[0,1.054,.026],group:1,material:2,steps:16});
+  body({width:SCREEN.width,height:SCREEN.height,thickness:.002,radius:.064,bevel:.0005,center:[0,SCREEN.centerY,SCREEN.frontZ-.001],group:1,material:2,steps:16});
   body({width:.365,height:.086,thickness:.004,radius:.018,bevel:.001,center:[0,1.995,.029],group:1,material:1});
   body({width:.013,height:.013,thickness:.002,radius:.0065,bevel:.0005,center:[0,1.981,.032],group:1,material:7,steps:8});
 
