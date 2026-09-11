@@ -1,4 +1,6 @@
 ---
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { render, type CollectionEntry } from 'astro:content';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import Layout from '../layouts/Layout.astro';
@@ -58,7 +60,20 @@ function firstPostImage(body: string): PostImage | undefined {
   return undefined;
 }
 
-const metaImage = firstPostImage(post.body ?? '') ?? {
+function optimizedPostImage(image: PostImage): PostImage {
+  const lastSlash = image.src.lastIndexOf('/');
+  if (!image.src.startsWith('/assets/posts/') || lastSlash < 0) return image;
+
+  const src = `${image.src.slice(0, lastSlash)}/og.jpg`;
+  const filePath = resolve(process.cwd(), 'public', src.slice(1));
+
+  return existsSync(filePath)
+    ? { ...image, src, width: 1200, height: 630 }
+    : image;
+}
+
+const firstImage = firstPostImage(post.body ?? '');
+const metaImage = firstImage ? optimizedPostImage(firstImage) : {
   src: post.data.image || '/assets/og/writing.png',
   alt: post.data.imageAlt || post.data.title,
   width: post.data.image ? null : 1200,
