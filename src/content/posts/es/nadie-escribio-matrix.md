@@ -64,7 +64,7 @@ La palabra clave es *aprendido*. Nadie programó la física. Nadie escribió un 
 
 Fue notable, pero también pasivo. Veías un sueño. No podías dirigirlo. No podías girar la cámara y ver qué había detrás. Estos modelos eran, [como lo expresan los investigadores de LingBot-World](https://arxiv.org/html/2601.20540v1), «soñadores más que simuladores». Alucinan transiciones de píxeles a partir de correlaciones estadísticas y carecen de una comprensión fundada de las leyes subyacentes.
 
-Y entonces alguien le dio un volante al sueño.
+Y entonces alguien le puso un volante al sueño.
 
 ---
 
