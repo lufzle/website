@@ -17,24 +17,31 @@ const writeHref = getRelativeLocaleUrl(locale, 'write');
 const localizedPaths = localizedPostPaths(post);
 
 const slug = postSlug(post.id);
-const postImages: Record<string, { src: string; width: number; height: number; alt: string }> = {
+const postImages: Record<string, { src: string; width: number; height: number }> = {
+  'nobody-wrote-the-matrix': {
+    src: '/assets/posts/nobody-wrote-the-matrix/commodore.png',
+    width: 1536,
+    height: 1024,
+  },
+  'nadie-escribio-matrix': {
+    src: '/assets/posts/nobody-wrote-the-matrix/commodore.png',
+    width: 1536,
+    height: 1024,
+  },
   'the-graph-is-the-easy-part': {
     src: '/assets/posts/the-graph-is-the-easy-part/hero-graph.png',
     width: 1536,
     height: 1024,
-    alt: 'A node-and-edge graph in black ink on grid paper with a dashed red edge',
   },
   'mcp-unified-protocol-agents-apps': {
     src: '/assets/posts/mcp-unified-protocol-agents-apps/hero-architecture.jpg',
     width: 1264,
     height: 848,
-    alt: 'Architectural diagram of agent and app protocol convergence',
   },
   'vibe-coding-a-mature-live-product': {
     src: '/assets/posts/vibe-coding-a-mature-live-product/hero-sediment.jpg',
     width: 1264,
     height: 848,
-    alt: 'Architectural blueprint showing code sediment over time',
   },
 };
 
@@ -45,12 +52,14 @@ const metaImage = post.data.image
       height: 630,
       alt: post.data.imageAlt || post.data.title,
     }
-  : (postImages[slug] ?? {
-      src: '/assets/portrait.jpg',
-      width: 1086,
-      height: 1448,
-      alt: 'Dario Farzati',
-    });
+  : {
+      ...(postImages[slug] ?? {
+        src: '/assets/og/writing.png',
+        width: 1200,
+        height: 630,
+      }),
+      alt: post.data.imageAlt || post.data.title,
+    };
 ---
 
 <Layout

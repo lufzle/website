@@ -9,7 +9,14 @@ const copy = useUi(locale);
 const posts = await postsForLocale(locale);
 ---
 
-<Layout title={copy.write.title} description={copy.write.description}>
+<Layout
+  title={copy.write.title}
+  description={copy.write.description}
+  image="/assets/og/writing.png"
+  imageAlt={locale === 'es' ? 'Escritos de Dario Farzati' : 'Writing by Dario Farzati'}
+  imageWidth={1200}
+  imageHeight={630}
+>
   <section class="writing-section">
     <header class="writing-header">
       <h1 class="writing-title mono">{copy.write.heading}</h1>
