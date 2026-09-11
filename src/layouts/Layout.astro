@@ -4,6 +4,7 @@ import Background from '../components/Background.astro';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import { asLocale, useUi } from '../i18n/ui';
+import type { LocalizedPaths } from '../i18n/posts';
 
 interface Props {
   title?: string;
@@ -15,6 +16,7 @@ interface Props {
   type?: 'website' | 'article';
   publishedTime?: string;
   author?: string;
+  localizedPaths?: LocalizedPaths;
 }
 
 const locale = asLocale(Astro.currentLocale);
@@ -29,6 +31,7 @@ const {
   type = 'website',
   publishedTime,
   author = 'Dario Farzati',
+  localizedPaths,
 } = Astro.props;
 
 const siteUrl = Astro.site ?? new URL('https://lufzle.dev');
@@ -37,8 +40,12 @@ const normalizedPath = pathname.endsWith('/') ? pathname : `${pathname}/`;
 const canonicalUrl = new URL(normalizedPath, siteUrl);
 
 const basePath = normalizedPath.replace(/^\/es(?=\/|$)/, '') || '/';
-const enUrl = new URL(basePath, siteUrl);
-const esUrl = new URL(basePath === '/' ? '/es/' : `/es${basePath}`, siteUrl);
+const resolvedLocalizedPaths = localizedPaths ?? {
+  en: basePath,
+  es: basePath === '/' ? '/es/' : `/es${basePath}`,
+};
+const enUrl = new URL(resolvedLocalizedPaths.en, siteUrl);
+const esUrl = new URL(resolvedLocalizedPaths.es, siteUrl);
 
 const ogImageUrl = new URL(image, siteUrl);
 const ogImageType = ogImageUrl.pathname.endsWith('.jpg') || ogImageUrl.pathname.endsWith('.jpeg')
@@ -83,7 +90,11 @@ const isoPublishedTime = toIsoDate(publishedTime);
 ---
 
 <!doctype html>
-<html lang={locale}>
+<html
+  lang={locale}
+  data-locale-en-path={resolvedLocalizedPaths.en}
+  data-locale-es-path={resolvedLocalizedPaths.es}
+>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -193,8 +204,10 @@ const isoPublishedTime = toIsoDate(publishedTime);
             var path = location.pathname;
             var current = path === '/es' || path.indexOf('/es/') === 0 ? 'es' : 'en';
             if (lang === current) return;
-            var rest = path.replace(/^\/es(?=\/|$)/, '') || '/';
-            var next = lang === 'es' ? (rest === '/' ? '/es/' : '/es' + rest) : rest;
+            var next = lang === 'es'
+              ? document.documentElement.dataset.localeEsPath
+              : document.documentElement.dataset.localeEnPath;
+            if (!next) return;
             if (next !== path) location.replace(next + location.search + location.hash);
           } catch (e) {}
         }
@@ -450,7 +463,7 @@ const isoPublishedTime = toIsoDate(publishedTime);
     <div
       style="position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh;color:var(--fg);font-size:var(--base-font-size, 20px);line-height:1.6;font-weight:400;text-wrap:pretty"
     >
-      <Nav />
+      <Nav localizedPaths={resolvedLocalizedPaths} />
       <main style="flex:1;width:100%;max-width:680px;margin:0 auto;padding:0 32px 96px;box-sizing:border-box">
         <slot />
       </main>

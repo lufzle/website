@@ -3,7 +3,7 @@ import { render, type CollectionEntry } from 'astro:content';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import Layout from '../layouts/Layout.astro';
 import { asLocale, useUi } from '../i18n/ui';
-import { postSlug } from '../i18n/posts';
+import { localizedPostPaths, postSlug } from '../i18n/posts';
 
 interface Props {
   post: CollectionEntry<'posts'>;
@@ -14,6 +14,7 @@ const { Content } = await render(post);
 const locale = asLocale(Astro.currentLocale);
 const copy = useUi(locale);
 const writeHref = getRelativeLocaleUrl(locale, 'write');
+const localizedPaths = localizedPostPaths(post);
 
 const slug = postSlug(post.id);
 const postImages: Record<string, { src: string; width: number; height: number; alt: string }> = {
@@ -62,6 +63,7 @@ const metaImage = post.data.image
   type="article"
   publishedTime={post.data.date}
   author="Dario Farzati"
+  localizedPaths={localizedPaths}
 >
   <article class="post-article">
     <a href={writeHref} class="back-link mono">{copy.write.back}</a>
