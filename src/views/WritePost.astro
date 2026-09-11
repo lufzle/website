@@ -3,7 +3,7 @@ import { render, type CollectionEntry } from 'astro:content';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import Layout from '../layouts/Layout.astro';
 import { asLocale, useUi } from '../i18n/ui';
-import { localizedPostPaths, postSlug } from '../i18n/posts';
+import { localizedPostPaths } from '../i18n/posts';
 
 interface Props {
   post: CollectionEntry<'posts'>;
@@ -16,50 +16,54 @@ const copy = useUi(locale);
 const writeHref = getRelativeLocaleUrl(locale, 'write');
 const localizedPaths = localizedPostPaths(post);
 
-const slug = postSlug(post.id);
-const postImages: Record<string, { src: string; width: number; height: number }> = {
-  'nobody-wrote-the-matrix': {
-    src: '/assets/posts/nobody-wrote-the-matrix/commodore.png',
-    width: 1536,
-    height: 1024,
-  },
-  'nadie-escribio-matrix': {
-    src: '/assets/posts/nobody-wrote-the-matrix/commodore.png',
-    width: 1536,
-    height: 1024,
-  },
-  'the-graph-is-the-easy-part': {
-    src: '/assets/posts/the-graph-is-the-easy-part/hero-graph.png',
-    width: 1536,
-    height: 1024,
-  },
-  'mcp-unified-protocol-agents-apps': {
-    src: '/assets/posts/mcp-unified-protocol-agents-apps/hero-architecture.jpg',
-    width: 1264,
-    height: 848,
-  },
-  'vibe-coding-a-mature-live-product': {
-    src: '/assets/posts/vibe-coding-a-mature-live-product/hero-sediment.jpg',
-    width: 1264,
-    height: 848,
-  },
-};
+interface PostImage {
+  src: string;
+  alt: string;
+  width: number | null;
+  height: number | null;
+}
 
-const metaImage = post.data.image
-  ? {
-      src: post.data.image,
-      width: 1200,
-      height: 630,
-      alt: post.data.imageAlt || post.data.title,
-    }
-  : {
-      ...(postImages[slug] ?? {
-        src: '/assets/og/writing.png',
-        width: 1200,
-        height: 630,
-      }),
-      alt: post.data.imageAlt || post.data.title,
+function htmlAttribute(tag: string, name: string): string | undefined {
+  return tag.match(new RegExp(`\\b${name}=["']([^"']*)["']`, 'i'))?.[1];
+}
+
+function firstPostImage(body: string): PostImage | undefined {
+  const markdown = /!\[([^\]]*)\]\(([^\s)]+)(?:\s+["'][^"']*["'])?\)/.exec(body);
+  const html = /<img\s+[^>]*>/i.exec(body);
+
+  if (markdown && (!html || markdown.index < html.index)) {
+    return {
+      src: markdown[2],
+      alt: markdown[1],
+      width: null,
+      height: null,
     };
+  }
+
+  if (html) {
+    const src = htmlAttribute(html[0], 'src');
+    if (src) {
+      const width = Number(htmlAttribute(html[0], 'width'));
+      const height = Number(htmlAttribute(html[0], 'height'));
+
+      return {
+        src,
+        alt: htmlAttribute(html[0], 'alt') || '',
+        width: Number.isFinite(width) && width > 0 ? width : null,
+        height: Number.isFinite(height) && height > 0 ? height : null,
+      };
+    }
+  }
+
+  return undefined;
+}
+
+const metaImage = firstPostImage(post.body ?? '') ?? {
+  src: post.data.image || '/assets/og/writing.png',
+  alt: post.data.imageAlt || post.data.title,
+  width: post.data.image ? null : 1200,
+  height: post.data.image ? null : 630,
+};
 ---
 
 <Layout
