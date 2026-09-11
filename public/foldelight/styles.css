@@ -291,13 +291,6 @@ a {
   color: var(--cyan);
 }
 
-.download-cluster {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.8rem;
-}
-
 .download {
   display: inline-flex;
   align-items: center;
@@ -323,25 +316,6 @@ a {
 
 .download:active {
   transform: translateY(0);
-}
-
-.repo-line {
-  margin-left: 1.55rem;
-  color: var(--muted);
-  font-size: 0.78rem;
-  text-underline-offset: 0.24em;
-  text-decoration-color: rgba(147, 150, 155, 0.48);
-  transition: color 160ms ease, text-decoration-color 160ms ease;
-}
-
-.repo-line:hover {
-  color: var(--paper);
-  text-decoration-color: currentColor;
-}
-
-.repo-line:focus-visible {
-  outline: 2px solid var(--cyan);
-  outline-offset: 4px;
 }
 
 .download:focus-visible,
