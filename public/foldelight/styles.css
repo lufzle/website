@@ -142,6 +142,11 @@ a {
   padding: 8rem var(--page-pad) 5rem;
 }
 
+.hero-copy {
+  display: grid;
+  gap: clamp(1.35rem, 2.5vw, 2.25rem);
+}
+
 .hero h1,
 .closing h2 {
   margin: 0;
@@ -158,9 +163,13 @@ a {
   display: block;
 }
 
-.hero h1 span:last-child {
-  margin-top: 0.22em;
+.hero-subline {
+  max-width: 47rem;
+  margin: 0;
   color: var(--muted);
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
+  line-height: 1.45;
+  text-wrap: balance;
 }
 
 .scroll-cue {
@@ -282,6 +291,13 @@ a {
   color: var(--cyan);
 }
 
+.download-cluster {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+
 .download {
   display: inline-flex;
   align-items: center;
@@ -309,6 +325,25 @@ a {
   transform: translateY(0);
 }
 
+.repo-line {
+  margin-left: 1.55rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+  text-underline-offset: 0.24em;
+  text-decoration-color: rgba(147, 150, 155, 0.48);
+  transition: color 160ms ease, text-decoration-color 160ms ease;
+}
+
+.repo-line:hover {
+  color: var(--paper);
+  text-decoration-color: currentColor;
+}
+
+.repo-line:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 4px;
+}
+
 .download:focus-visible,
 .brand:focus-visible,
 .github-link:focus-visible,
@@ -323,13 +358,16 @@ footer {
   right: var(--page-pad);
   bottom: max(1.5rem, env(safe-area-inset-bottom));
   display: flex;
-  gap: 1.25rem;
-  justify-content: space-between;
   color: #686c71;
   font-size: 0.75rem;
 }
 
+footer p {
+  margin: 0;
+}
+
 footer a {
+  color: inherit;
   text-underline-offset: 0.2em;
 }
 
