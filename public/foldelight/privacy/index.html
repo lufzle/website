@@ -24,11 +24,21 @@
     </header>
 
     <main class="legal-shell">
-      <h1>Privacy</h1>
-      <p class="legal-updated">Effective September 11, 2026</p>
+      <h1>Privacy Policy</h1>
+      <p class="legal-updated">Last updated September 11, 2026</p>
 
       <section class="legal-section">
-        <h2>Screen Recording permission</h2>
+        <h2>1. Scope</h2>
+        <p>This Privacy Policy explains how the foldelight macOS application handles information. foldelight processes the screen image and lid angle locally so it can render the folding effect. It does not create an account, show advertising, or send app data to a server.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>2. Information foldelight processes</h2>
+        <p>foldelight processes live frames from your built-in display and a numerical reading from your MacBook’s lid-angle sensor. It also reads and stores the settings that you choose in the app.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>3. Screen Recording permission</h2>
         <p>macOS requires permission before an app can capture the screen. While the desktop effect runs, foldelight uses Apple’s ScreenCaptureKit to receive live frames from the built-in display. It keeps each frame in memory, reprojects it with the graphics processor, draws it on a full-screen overlay, and replaces it with the next frame. foldelight excludes that overlay from capture to prevent a recursive image.</p>
         <ul>
           <li>Normal effect operation does not write screen frames to disk.</li>
@@ -41,15 +51,57 @@
       </section>
 
       <section class="legal-section">
-        <h2>Lid-angle sensor</h2>
+        <h2>4. Lid-angle sensor</h2>
         <p>foldelight reads a single numerical hinge angle from the sensor in a compatible Apple silicon MacBook. It uses that number to drive the effect and does not transmit it.</p>
         <p>During normal operation, the angle stays in memory. If you enable Debug, a local temporary log can include the current angle and aggregate sensor timing information.</p>
       </section>
 
       <section class="legal-section">
-        <h2>What is stored on your Mac</h2>
+        <h2>5. Information stored on your Mac</h2>
         <p>foldelight stores your Blur, Vignette, and activation-angle settings in standard macOS preferences. It also stores whether Debug is enabled. The app does not send these settings anywhere.</p>
         <p>When Debug is enabled, foldelight writes local text logs to the private <code>foldelight-debug</code> temporary folder. A diagnostic MP4 appears there only when you start a recording. Delete the app’s preferences to remove its saved settings. Delete the temporary folder to remove its logs and recordings.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>6. How foldelight uses information</h2>
+        <p>foldelight uses screen frames and lid-angle readings only to render the effect that you requested. It uses local settings to restore your preferred configuration. It uses local debug information only to help diagnose performance or compatibility problems.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>7. Sharing and network activity</h2>
+        <p>foldelight does not sell, share, or transmit screen frames, lid-angle readings, settings, logs, or recordings. The app makes no network requests.</p>
+        <p>The foldelight webpage is static. Its client code does not set cookies, run analytics, or send form data. Links to other websites are governed by those websites’ privacy policies.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>8. Retention and deletion</h2>
+        <p>Live frames and lid-angle readings remain in memory only as needed to render the effect. Each screen frame is replaced by the next frame.</p>
+        <p>Your settings remain in macOS preferences until you delete them. Debug logs and diagnostic recordings remain in the temporary folder until you or macOS delete them.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>9. Your choices</h2>
+        <p>You can pause the effect, disable Debug, or quit foldelight at any time. You can revoke Screen Recording permission in macOS System Settings. You can delete the app’s preferences, logs, and diagnostic recordings from your Mac.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>10. Security</h2>
+        <p>foldelight keeps app processing on your Mac. Its debug folder uses private local permissions. No method of storage is completely secure, so you should remove diagnostic files when you no longer need them.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>11. Children’s privacy</h2>
+        <p>foldelight is not directed to children and does not knowingly collect personal information from children.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>12. Changes to this policy</h2>
+        <p>This policy may change when foldelight’s features or data practices change. The date at the top shows the latest revision.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>13. Contact</h2>
+        <p>For privacy questions, open an issue in the <a href="https://github.com/lufzle/foldelight/issues">foldelight GitHub repository</a>.</p>
       </section>
     </main>
 
