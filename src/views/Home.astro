@@ -12,7 +12,14 @@ const contactHref = getRelativeLocaleUrl(locale, 'contact');
 const writeHref = getRelativeLocaleUrl(locale, 'write');
 ---
 
-<Layout>
+<Layout
+  image="/assets/og/home.png"
+  imageAlt={locale === 'es'
+    ? 'Dario Farzati — estrategia de IA, educación y diseño de producto'
+    : 'Dario Farzati — AI strategy, education, and product design'}
+  imageWidth={1200}
+  imageHeight={630}
+>
   <div class="home-container">
     <header class="hero-header">
       <div class="portrait-wrapper">

@@ -2,10 +2,18 @@
 import Layout from '../layouts/Layout.astro';
 import { asLocale, useUi } from '../i18n/ui';
 
-const copy = useUi(asLocale(Astro.currentLocale));
+const locale = asLocale(Astro.currentLocale);
+const copy = useUi(locale);
 ---
 
-<Layout title={copy.privacy.title} description={copy.privacy.description}>
+<Layout
+  title={copy.privacy.title}
+  description={copy.privacy.description}
+  image="/assets/og/privacy.png"
+  imageAlt={locale === 'es' ? 'Privacidad en lufzle.dev' : 'Privacy at lufzle.dev'}
+  imageWidth={1200}
+  imageHeight={630}
+>
   <section class="privacy-section">
     <header class="privacy-header">
       <div class="privacy-tag mono">{copy.privacy.tag}</div>

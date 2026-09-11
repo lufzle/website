@@ -1,18 +1,24 @@
 ---
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import { asLocale, useUi } from '../i18n/ui';
+import type { LocalizedPaths } from '../i18n/posts';
 import ThemeToggle from './ThemeToggle.astro';
+
+interface Props {
+  localizedPaths?: LocalizedPaths;
+}
 
 const locale = asLocale(Astro.currentLocale);
 const copy = useUi(locale);
+const { localizedPaths } = Astro.props;
 const rest =
   locale === 'es' ? Astro.url.pathname.replace(/^\/es\/?/, '/') || '/' : Astro.url.pathname;
 const path = rest.replace(/^\//, '').replace(/\/$/, '') || '/';
 const homeHref = getRelativeLocaleUrl(locale, '/');
 const writeHref = getRelativeLocaleUrl(locale, 'write');
 const contactHref = getRelativeLocaleUrl(locale, 'contact');
-const enHref = getRelativeLocaleUrl('en', path);
-const esHref = getRelativeLocaleUrl('es', path);
+const enHref = localizedPaths?.en ?? getRelativeLocaleUrl('en', path);
+const esHref = localizedPaths?.es ?? getRelativeLocaleUrl('es', path);
 ---
 
 <nav class="nav-bar">
