@@ -76,8 +76,14 @@ a {
 }
 
 .brand,
-.license {
+.masthead-actions {
   pointer-events: auto;
+}
+
+.masthead-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
 }
 
 .brand {
@@ -99,6 +105,32 @@ a {
 .license {
   font-size: 0.75rem;
   letter-spacing: 0.08em;
+}
+
+.github-link {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border-radius: 999px;
+  color: inherit;
+  transition: color 160ms ease, background-color 160ms ease, transform 160ms ease;
+}
+
+.github-link svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: currentColor;
+}
+
+.github-link:hover {
+  color: var(--paper);
+  background: rgba(240, 239, 235, 0.1);
+  transform: translateY(-1px);
+}
+
+.github-link:active {
+  transform: translateY(0);
 }
 
 .hero,
@@ -279,6 +311,7 @@ a {
 
 .download:focus-visible,
 .brand:focus-visible,
+.github-link:focus-visible,
 .scroll-cue:focus-visible {
   outline: 2px solid var(--cyan);
   outline-offset: 5px;
