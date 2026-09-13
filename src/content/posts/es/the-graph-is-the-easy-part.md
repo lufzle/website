@@ -184,7 +184,7 @@ corroboración.
 
 Los investigadores modelaron la dependencia entre fuentes ya en 2009. Un valor falso puede propagarse
 mediante copias, tras lo cual la concordancia aporta mucha menos evidencia
-[[19]](http://www.vldb.org/pvldb/vol2/vldb09-pvldb47.pdf). Por lo tanto, el resolvedor cuenta fuentes
+[[19]](https://www.vldb.org/pvldb/vol2/vldb09-pvldb47.pdf). Por lo tanto, el resolvedor cuenta fuentes
 independientes detrás del respaldo. Las afirmaciones o enlaces repetidos no aumentan esa cuenta.
 
 ![Un nodo central de afirmación con cinco aristas entrantes, cuatro de los nodos de origen dibujados como fotocopias descoloridas del quinto](/assets/posts/the-graph-is-the-easy-part/five-edges-one-source.png)
@@ -194,7 +194,7 @@ en escribir gana» descarta una aserción cuando llega un reemplazo. Promediar c
 proporcionó.
 Una puntuación de confianza en la interfaz parece más prudente. En una evaluación, dos métodos consagrados
 de descubrimiento de la verdad produjeron una tasa de falsos positivos de 1,0 en ambos conjuntos de datos;
-predijeron que cada valor era verdadero [[17]](http://vldb.org/pvldb/vol5/p550_bozhao_vldb2012.pdf).
+predijeron que cada valor era verdadero [[17]](https://vldb.org/pvldb/vol5/p550_bozhao_vldb2012.pdf).
 
 Convertí la contradicción en un estado dentro del registro. Una ranura contiene una afirmación resuelta o
 un resultado explícito `UNKNOWN_CONTRADICTED` con los valores en competencia adjuntos. Los estándares
@@ -307,9 +307,9 @@ Un grafo te permitirá decir más de lo que sabes. El trabajo consiste en no dec
 14. Jensen & Snodgrass. [Temporal Data Management](https://www2.cs.arizona.edu/~rts/pubs/TKDEJan99.pdf), IEEE TKDE 1999.
 15. XTDB. [Time in XTDB: bitemporality](https://docs.xtdb.com/about/time-in-xtdb.html).
 16. Datomic. [Overview: retractions as facts](https://docs.datomic.com/datomic-overview.html).
-17. Zhao et al. [A Bayesian Approach to Discovering Truth from Conflicting Sources for Data Integration](http://vldb.org/pvldb/vol5/p550_bozhao_vldb2012.pdf), VLDB 2012.
+17. Zhao et al. [A Bayesian Approach to Discovering Truth from Conflicting Sources for Data Integration](https://vldb.org/pvldb/vol5/p550_bozhao_vldb2012.pdf), VLDB 2012.
 18. ODNI. [Intelligence Community Directive 203: Analytic Standards](https://www.dni.gov/files/documents/ICD/ICD-203.pdf).
-19. Dong, Berti-Équille & Srivastava. [Integrating Conflicting Data: The Role of Source Dependence](http://www.vldb.org/pvldb/vol2/vldb09-pvldb47.pdf), VLDB 2009.
+19. Dong, Berti-Équille & Srivastava. [Integrating Conflicting Data: The Role of Source Dependence](https://www.vldb.org/pvldb/vol2/vldb09-pvldb47.pdf), VLDB 2009.
 20. Razniewski, Suchanek & Nutt. [But What Do We Actually Know?](https://www.akbc.ws/2016/papers/10_Paper.pdf), AKBC 2016.
 21. Zou et al. [PoisonedRAG: Knowledge Corruption Attacks to Retrieval-Augmented Generation of Large Language Models](https://arxiv.org/abs/2402.07867), 2024.
 22. Chhikara et al. [Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory](https://arxiv.org/abs/2504.19413), 2025.

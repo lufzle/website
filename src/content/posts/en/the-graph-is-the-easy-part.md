@@ -187,7 +187,7 @@ corroboration.
 
 Researchers modelled source dependence as early as 2009. A false value can spread
 through copying, after which agreement offers much less evidence
-[[19]](http://www.vldb.org/pvldb/vol2/vldb09-pvldb47.pdf). The resolver therefore counts
+[[19]](https://www.vldb.org/pvldb/vol2/vldb09-pvldb47.pdf). The resolver therefore counts
 independent sources behind the support. Repeated claims or links do not increase that
 count.
 
@@ -199,7 +199,7 @@ supplied.
 A confidence score in the interface appears more careful. In one evaluation, two
 established truth-discovery methods produced a false positive rate of 1.0 on both
 datasets; they predicted every value true
-[[17]](http://vldb.org/pvldb/vol5/p550_bozhao_vldb2012.pdf).
+[[17]](https://vldb.org/pvldb/vol5/p550_bozhao_vldb2012.pdf).
 
 I made contradiction a state in the record. A slot contains one resolved claim or an
 explicit `UNKNOWN_CONTRADICTED` result with the competing values attached. The
@@ -318,9 +318,9 @@ A graph will let you say more than you know. The work is in not saying it.
 14. Jensen & Snodgrass. [Temporal Data Management](https://www2.cs.arizona.edu/~rts/pubs/TKDEJan99.pdf), IEEE TKDE 1999.
 15. XTDB. [Time in XTDB: bitemporality](https://docs.xtdb.com/about/time-in-xtdb.html).
 16. Datomic. [Overview: retractions as facts](https://docs.datomic.com/datomic-overview.html).
-17. Zhao et al. [A Bayesian Approach to Discovering Truth from Conflicting Sources for Data Integration](http://vldb.org/pvldb/vol5/p550_bozhao_vldb2012.pdf), VLDB 2012.
+17. Zhao et al. [A Bayesian Approach to Discovering Truth from Conflicting Sources for Data Integration](https://vldb.org/pvldb/vol5/p550_bozhao_vldb2012.pdf), VLDB 2012.
 18. ODNI. [Intelligence Community Directive 203: Analytic Standards](https://www.dni.gov/files/documents/ICD/ICD-203.pdf).
-19. Dong, Berti-Équille & Srivastava. [Integrating Conflicting Data: The Role of Source Dependence](http://www.vldb.org/pvldb/vol2/vldb09-pvldb47.pdf), VLDB 2009.
+19. Dong, Berti-Équille & Srivastava. [Integrating Conflicting Data: The Role of Source Dependence](https://www.vldb.org/pvldb/vol2/vldb09-pvldb47.pdf), VLDB 2009.
 20. Razniewski, Suchanek & Nutt. [But What Do We Actually Know?](https://www.akbc.ws/2016/papers/10_Paper.pdf), AKBC 2016.
 21. Zou et al. [PoisonedRAG: Knowledge Corruption Attacks to Retrieval-Augmented Generation of Large Language Models](https://arxiv.org/abs/2402.07867), 2024.
 22. Chhikara et al. [Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory](https://arxiv.org/abs/2504.19413), 2025.
