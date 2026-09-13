@@ -188,3 +188,9 @@ Ya no me siento como un dios, para ser honesto. Ni siquiera escribo código. La 
 Pero ya ni siquiera es tan emocionante. Ahora, a los cuarenta y siete años, aunque sigo siendo demasiado viejo para comprender la escala de mi propia pregunta, me pregunto hasta dónde puede llegar esto.
 
 Nadie escribió la Matrix.
+
+---
+
+## Actualización — 13 de septiembre de 2026
+
+Después de publicar este ensayo, construí [Excellusion](https://github.com/lufzle/excellusion), una prueba de concepto funcional del experimento mental de la hoja de cálculo que aparece más arriba. En el modo híbrido, el modelo genera el estado completo de la cuadrícula sin una capa de datos ni un intérprete de fórmulas; en el modo completo, genera toda la interfaz de la hoja de cálculo como HTML a partir de una captura de pantalla y del evento del navegador. El código, los prompts y el registro de solicitudes son públicos, así que puedes examinar dónde se sostiene la ilusión y dónde se rompe.
