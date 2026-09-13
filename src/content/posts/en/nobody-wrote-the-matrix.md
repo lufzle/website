@@ -188,3 +188,9 @@ I don't feel like a god anymore, to be honest. I don't even write code anymore. 
 But it's not even that exciting anymore. Now, at forty-seven, although far too old to understand the scale of my own question, I wonder how far could this go.
 
 Nobody wrote the Matrix.
+
+---
+
+## Update — September 13, 2026
+
+After publishing this essay, I built [Excellusion](https://github.com/lufzle/excellusion), a working proof of concept for the spreadsheet thought experiment above. In hybrid mode, the model generates the full grid state without a data layer or formula parser; in full mode, it generates the entire spreadsheet interface as HTML from a screenshot and the raw browser event. The code, prompts, and request log are public, so you can inspect where the illusion holds and where it breaks.
