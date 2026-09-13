@@ -17,6 +17,7 @@ const en = {
     email: 'Email',
     contact: 'Contact',
     privacy: 'Privacy',
+    rss: 'RSS',
   },
   theme: {
     toggle: 'Toggle theme (hold for a surprise)',
@@ -54,6 +55,7 @@ const en = {
     description:
       'Essays on agentic engineering, systems architecture, and working with AI in production.',
     heading: 'Things I write',
+    rssTitle: 'RSS feed of writing by Dario Farzati',
     back: '← All posts',
   },
   contact: {
@@ -116,6 +118,7 @@ const es: typeof en = {
     email: 'Email',
     contact: 'Contacto',
     privacy: 'Privacidad',
+    rss: 'RSS',
   },
   theme: {
     toggle: 'Cambiar tema (mantén pulsado para una sorpresa)',
@@ -153,6 +156,7 @@ const es: typeof en = {
     description:
       'Ensayos sobre ingeniería agéntica, arquitectura de sistemas y trabajo con IA en producción.',
     heading: 'Cosas que escribo',
+    rssTitle: 'Feed RSS de los escritos de Dario Farzati',
     back: '← Todos los textos',
   },
   contact: {

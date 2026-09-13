@@ -1,11 +1,13 @@
 ---
 import { getRelativeLocaleUrl } from 'astro:i18n';
+import { rssPath } from '../i18n/posts';
 import { asLocale, useUi } from '../i18n/ui';
 
 const locale = asLocale(Astro.currentLocale);
 const copy = useUi(locale);
 const contactHref = getRelativeLocaleUrl(locale, 'contact');
 const privacyHref = getRelativeLocaleUrl(locale, 'privacy');
+const rssHref = rssPath(locale);
 ---
 
 <footer class="site-footer">
@@ -20,6 +22,7 @@ const privacyHref = getRelativeLocaleUrl(locale, 'privacy');
     <div class="footer-sublinks">
       <a href={contactHref} class="footer-sublink">{copy.footer.contact}</a>
       <a href={privacyHref} class="footer-sublink">{copy.footer.privacy}</a>
+      <a href={rssHref} class="footer-sublink">{copy.footer.rss}</a>
     </div>
   </div>
 </footer>

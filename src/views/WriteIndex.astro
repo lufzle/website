@@ -2,11 +2,12 @@
 import Layout from '../layouts/Layout.astro';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import { asLocale, useUi } from '../i18n/ui';
-import { postsForLocale, postSlug } from '../i18n/posts';
+import { postsForLocale, postSlug, rssPath } from '../i18n/posts';
 
 const locale = asLocale(Astro.currentLocale);
 const copy = useUi(locale);
 const posts = await postsForLocale(locale);
+const rssHref = rssPath(locale);
 ---
 
 <Layout
@@ -20,6 +21,7 @@ const posts = await postsForLocale(locale);
   <section class="writing-section">
     <header class="writing-header">
       <h1 class="writing-title mono">{copy.write.heading}</h1>
+      <a href={rssHref} class="rss-link mono">{copy.footer.rss}</a>
     </header>
 
     <div class="posts-list">
@@ -51,8 +53,20 @@ const posts = await postsForLocale(locale);
 
   .writing-header {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .rss-link {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg3);
+  }
+
+  .rss-link:hover {
+    color: var(--c);
   }
 
   .writing-title {

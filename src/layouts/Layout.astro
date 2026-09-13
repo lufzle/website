@@ -4,7 +4,7 @@ import Background from '../components/Background.astro';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import { asLocale, useUi } from '../i18n/ui';
-import type { LocalizedPaths } from '../i18n/posts';
+import { parsePostDate, rssPath, type LocalizedPaths } from '../i18n/posts';
 
 interface Props {
   title?: string;
@@ -54,39 +54,8 @@ const ogImageType = ogImageUrl.pathname.endsWith('.jpg') || ogImageUrl.pathname.
     ? 'image/gif'
     : 'image/png';
 
-const SPANISH_MONTHS: Record<string, string> = {
-  ene: 'Jan',
-  feb: 'Feb',
-  mar: 'Mar',
-  abr: 'Apr',
-  may: 'May',
-  jun: 'Jun',
-  jul: 'Jul',
-  ago: 'Aug',
-  sep: 'Sep',
-  set: 'Sep',
-  oct: 'Oct',
-  nov: 'Nov',
-  dic: 'Dec',
-};
-
-function toIsoDate(dateStr?: string): string | undefined {
-  if (!dateStr) return undefined;
-  let parsed = Date.parse(dateStr);
-  if (isNaN(parsed)) {
-    const normalized = dateStr
-      .toLowerCase()
-      .replace(
-        /\b(ene|feb|mar|abr|may|jun|jul|ago|sep|set|oct|nov|dic)[a-z]*\b/g,
-        (m) => SPANISH_MONTHS[m.slice(0, 3)] ?? m
-      );
-    parsed = Date.parse(normalized);
-  }
-  if (isNaN(parsed)) return undefined;
-  return new Date(parsed).toISOString();
-}
-
-const isoPublishedTime = toIsoDate(publishedTime);
+const isoPublishedTime = publishedTime ? parsePostDate(publishedTime)?.toISOString() : undefined;
+const rssHref = new URL(rssPath(locale), siteUrl);
 ---
 
 <!doctype html>
@@ -113,6 +82,7 @@ const isoPublishedTime = toIsoDate(publishedTime);
     <link rel="alternate" hreflang="en" href={enUrl.href} />
     <link rel="alternate" hreflang="es" href={esUrl.href} />
     <link rel="alternate" hreflang="x-default" href={enUrl.href} />
+    <link rel="alternate" type="application/rss+xml" title={copy.write.rssTitle} href={rssHref.href} />
 
     <!-- Open Graph / Facebook / LinkedIn / WhatsApp -->
     <meta property="og:site_name" content="Dario Farzati" />
